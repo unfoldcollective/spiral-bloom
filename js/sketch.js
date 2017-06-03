@@ -2,6 +2,7 @@ var myActivitySpiral;
 var started = false;
 
 var center;
+
 var a1 = 1;
 var a1Min = 0;
 var a1Max = 100;
@@ -9,6 +10,7 @@ var b1 = 1;
 var b1Min = 0;
 var b1Max = 10;
 var b1Step = 0.1;
+var colorArch = [255, 0, 0];
 
 var a2 = 1;
 var a2Min = 0;
@@ -16,8 +18,9 @@ var a2Max = 10;
 var a2Step = 0.1;
 var b2 = 0.2;
 var b2Min = 0;
-var b2Max = 2;
+var b2Max = 1;
 var b2Step = 0.01;
+var colorLoga = [0, 0, 255]
 
 var guiArchimedean;
 var guiLogarithmic;
@@ -67,7 +70,7 @@ function draw() {
 
     console.log("draw");
 
-    fill(255, 0, 0);
+    fill(colorArch);
     let spiral_positions_archimedean = _.range(100)
         .map(function(value, index, array) {
             return get_spiral_pos_archimedean(center, value);
@@ -75,15 +78,37 @@ function draw() {
         .map(function(value, index, array) {
             ellipse(value.x, value.y, 10, 10);
             return value
+        })
+        .map(function(value, index, array) {
+            stroke(colorArch);
+            if (index > 0) {
+                line(
+                    array[index - 1].x, array[index - 1].y,
+                    array[index].x, array[index].y
+                )
+            }
+            noStroke();
+            return value
         });
     
-    fill(0, 0, 255);
+    fill(colorLoga);
     let spiral_positions_logarithmic = _.range(100)
         .map(function(value, index, array) {
             return get_spiral_pos_logarithmic(center, value);
         })
         .map(function(value, index, array) {
             ellipse(value.x, value.y, 10, 10);
+            return value
+        })
+        .map(function(value, index, array) {
+            stroke(colorLoga);
+            if (index > 0) {
+                line(
+                    array[index - 1].x, array[index - 1].y,
+                    array[index].x, array[index].y
+                )
+            }
+            noStroke();
             return value
         });
 }
