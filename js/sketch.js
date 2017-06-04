@@ -6,21 +6,25 @@ var center;
 var a1 = 1;
 var a1Min = 0;
 var a1Max = 100;
-var b1 = 1;
+var b1 = 3;
 var b1Min = 0;
 var b1Max = 10;
 var b1Step = 0.1;
 var colorArch = [255, 0, 0];
+var minArch = 0;
+var maxArch = 100;
 
-var a2 = 1;
+var a2 = 0.1;
 var a2Min = 0;
 var a2Max = 10;
 var a2Step = 0.1;
-var b2 = 0.2;
+var b2 = 0.08;
 var b2Min = 0;
-var b2Max = 1;
-var b2Step = 0.01;
-var colorLoga = [0, 0, 255]
+var b2Max = 0.1;
+var b2Step = 0.001;
+var colorLoga = [0, 0, 255];
+var minLoga = 54;
+var maxLoga = 100;
 
 var guiArchimedean;
 var guiLogarithmic;
@@ -41,15 +45,19 @@ function setup() {
     guiArchimedean.addGlobals(
         'a1',
         'b1',
+        'minArch',
+        'maxArch',
     );
 
     guiLogarithmic  = createGui('Logarithmic');
     guiLogarithmic.addGlobals(
         'a2',
         'b2',
+        'minLoga',
+        'maxLoga',
     );
 
-    set_gui_styles('Logarithmic', {"left": "240px"});
+    set_gui_styles('Logarithmic', {"top": "260px"});
 
     // load timeline date
     
@@ -68,10 +76,13 @@ function draw() {
     clear();
     background(0);
 
-    console.log("draw");
-
     fill(colorArch);
     let spiral_positions_archimedean = _.range(100)
+        .filter(function(value, index) {
+            if (value >= minArch && value <= maxArch ) {
+                return value;
+            }
+        })
         .map(function(value, index, array) {
             return get_spiral_pos_archimedean(center, value);
         })
@@ -93,6 +104,11 @@ function draw() {
     
     fill(colorLoga);
     let spiral_positions_logarithmic = _.range(100)
+        .filter(function(value, index) {
+            if (value >= minLoga && value <= maxLoga ) {
+                return value;
+            }
+        })
         .map(function(value, index, array) {
             return get_spiral_pos_logarithmic(center, value);
         })
@@ -125,13 +141,6 @@ function get_spiral_pos_logarithmic(center, angle) {
         center.x + a2 * Math.pow(Math.E, b2 * angle) * Math.cos(angle),
         center.y + a2 * Math.pow(Math.E, b2 * angle) * Math.sin(angle)
     )
-}
-
-function draw_spiral(positions) {
-    positions.map(function(value, index, array) {
-        ellipse(value.x, value.y, 20, 20);
-        return value;
-    });
 }
 
 function ActivitySpiral(jsonInput) {
