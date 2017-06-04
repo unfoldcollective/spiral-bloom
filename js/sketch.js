@@ -76,7 +76,6 @@ function draw() {
     clear();
     background(0);
 
-    fill(colorArch);
     let spiral_positions_archimedean = _.range(100)
         .filter(function(value, index) {
             if (value >= minArch && value <= maxArch ) {
@@ -84,23 +83,23 @@ function draw() {
             }
         })
         .map(function(value, index, array) {
-            return get_spiral_pos_archimedean(center, value);
-        })
-        .map(function(value, index, array) {
-            ellipse(value.x, value.y, 10, 10);
-            return value
-        })
-        .map(function(value, index, array) {
-            stroke(colorArch);
+            let fadingRed = [map(value, minArch, maxArch, 0, 255),0,0];
+            fill(fadingRed);
+            let spiral_pos_archimedean = get_spiral_pos_archimedean(center, value);
+            ellipse(spiral_pos_archimedean.x, spiral_pos_archimedean.y, 10, 10);
+            
+            // lines
+            stroke(fadingRed);
             if (index > 0) {
+                let spiral_pos_archimedean_prev = get_spiral_pos_archimedean(center, array[index-1]);
                 line(
-                    array[index - 1].x, array[index - 1].y,
-                    array[index].x, array[index].y
+                    spiral_pos_archimedean_prev.x, spiral_pos_archimedean_prev.y,
+                    spiral_pos_archimedean.x, spiral_pos_archimedean.y
                 )
             }
             noStroke();
-            return value
-        });
+            return spiral_pos_archimedean;
+        })
     
     fill(colorLoga);
     let spiral_positions_logarithmic = _.range(100)
@@ -110,23 +109,30 @@ function draw() {
             }
         })
         .map(function(value, index, array) {
-            return get_spiral_pos_logarithmic(center, value);
-        })
-        .map(function(value, index, array) {
-            ellipse(value.x, value.y, 10, 10);
-            return value
-        })
-        .map(function(value, index, array) {
-            stroke(colorLoga);
+            let fadingBlue = [0, 0, map(value, minLoga, maxLoga, 0, 255)];
+            fill(fadingBlue);
+            let spiral_pos_logarithmic = get_spiral_pos_logarithmic(center, value);
+            ellipse(spiral_pos_logarithmic.x, spiral_pos_logarithmic.y, 10, 10);
+            
+            // lines
+            stroke(fadingBlue);
             if (index > 0) {
+                let spiral_pos_logarithmic_prev = get_spiral_pos_logarithmic(center, array[index-1]);
                 line(
-                    array[index - 1].x, array[index - 1].y,
-                    array[index].x, array[index].y
+                    spiral_pos_logarithmic_prev.x, spiral_pos_logarithmic_prev.y,
+                    spiral_pos_logarithmic.x, spiral_pos_logarithmic.y
                 )
             }
             noStroke();
-            return value
-        });
+            return spiral_pos_logarithmic;
+        })
+
+    if (JSONloaded) {
+        console.log(jsonInput);
+        // jsonInput.map(function(value, index, array) {
+        //     return 
+        // });
+    }
 }
 
 function get_spiral_pos_archimedean(center, angle) {
