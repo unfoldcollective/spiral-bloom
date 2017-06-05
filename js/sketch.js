@@ -86,7 +86,7 @@ function draw() {
         timelineConstructed =  true;
     } else if (timelineConstructed) {
         let timeline_positions = get_spiral_logarithmic(myTimeline.angles);
-        drawSpiral(timeline_positions, 180, true);
+        drawSpiral(timeline_positions, 180);
     }
 }
 
@@ -149,7 +149,7 @@ function get_spiral_logarithmic(angles) {
         });
 }
 
-function drawSpiral(position_objects, hue, draw_points) {
+function drawSpiral(position_objects, hue, draw_points=true) {
     position_objects.map(function(value, index, array) {
 
         let lightness = map(value.angle, array[0].angle, array[array.length-1].angle, 0, 80);
