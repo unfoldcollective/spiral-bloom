@@ -27,6 +27,7 @@ var b2Step = 0.001;
 var colorLoga = [0, 0, 255];
 var minLoga = 0;
 var maxLoga = 7 * Math.PI * 2;
+var maxLogaStep = 0.01;
 
 var colorData = [0, 255, 0];
 
@@ -77,7 +78,7 @@ function draw() {
             }
         });
     
-    drawSpiral(spiral_positions_logarithmic, 0);
+    drawSpiral(spiral_positions_logarithmic, 0, false);
 
     if (JSONloaded && !timelineConstructed) {
         console.log("construct timeline");
@@ -85,7 +86,7 @@ function draw() {
         timelineConstructed =  true;
     } else if (timelineConstructed) {
         let timeline_positions = get_spiral_logarithmic(myTimeline.angles);
-        drawSpiral(timeline_positions, 180);
+        drawSpiral(timeline_positions, 180, true);
     }
 }
 
@@ -120,15 +121,6 @@ function Timeline(jsonInput) {
         .map(function(value, index, array) {
             return map(value.date, self.minDate.getTime(), lastDate.getTime(), 0, 7 * Math.PI * 2);
         });
-
-    // console.log(self.angles);
-
-    // this.draw = function () {
-    //     for (var i = 0; i < this.positions.length; i++) {
-    //         console.log(this.positions[i]['x']);
-    //         ellipse(this.positions[i]['x'], this.positions[i]['y'], 10, 10);
-    //     }
-    // }
 }
 
 function get_spiral_logarithmic(angles) {
@@ -157,14 +149,16 @@ function get_spiral_logarithmic(angles) {
         });
 }
 
-function drawSpiral(position_objects, hue) {
+function drawSpiral(position_objects, hue, draw_points) {
     position_objects.map(function(value, index, array) {
 
         let lightness = map(value.angle, array[0].angle, array[array.length-1].angle, 0, 80);
         let point_color = hslaToP5RGBA([hue, 100, lightness, 255]);
-
-        fill(point_color);
-        ellipse(value.x, value.y, value.radius * 0.05, value.radius * 0.05);
+        
+        if (draw_points) {
+            fill(point_color);
+            ellipse(value.x, value.y, value.radius * 0.05, value.radius * 0.05);
+        }
         stroke(point_color);
         line(
             value.x_prev, value.y_prev,
