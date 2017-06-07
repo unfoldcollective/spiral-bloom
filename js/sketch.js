@@ -16,11 +16,11 @@ var colorArch = [255, 0, 0];
 var minArch = 0;
 var maxArch = 100;
 
-var a2 = 4;
+var a2 = 0.2;
 var a2Min = 0;
 var a2Max = 10;
 var a2Step = 0.1;
-var b2 = 0.1;
+var b2 = 0.17;
 var b2Min = 0;
 var b2Max = 0.2;
 var b2Step = 0.001;
