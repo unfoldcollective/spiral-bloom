@@ -107,9 +107,9 @@ function Timeline(jsonInput) {
         });
 
     // TODO: change minDate to be 7 days from NOW, rather than lastDate
-    // self.minDate = new Date(lastDate);
-    // self.minDate.setDate(lastDate.getDate() - 7);
-    self.minDate = new Date(firstDate);
+    self.minDate = new Date(lastDate);
+    self.minDate.setDate(lastDate.getDate() - 3);
+    // self.minDate = new Date(firstDate);
 
     self.angles = self.events
         // last 7 days
@@ -157,7 +157,8 @@ function drawSpiral(position_objects, hue, draw_points=true) {
         
         if (draw_points) {
             fill(point_color);
-            ellipse(value.x, value.y, value.radius * 0.05, value.radius * 0.05);
+            ellipse(value.x, value.y, value.radius * 0.8, value.radius * 0.8);
+            noFill();
         }
         stroke(point_color);
         line(
