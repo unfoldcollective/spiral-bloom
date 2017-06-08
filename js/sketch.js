@@ -163,11 +163,11 @@ function drawSpiral(position_objects, hue, draw_points=true, draw_lines=true) {
         }
         if (draw_lines) {
             stroke(line_color);
-        line(
-            value.x_prev, value.y_prev,
-            value.x, value.y
-        )
-        noStroke();
+            line(
+                value.x_prev, value.y_prev,
+                value.x, value.y
+            )
+            noStroke();            
         }
         return value;
     });
@@ -190,42 +190,6 @@ function get_spiral_pos_logarithmic(center, angle) {
 function get_spiral_radius_logarithmic(center, angle) {
     return a2 * Math.pow(Math.E, b2 * angle);
 }
-
-function getDayRatio(timeStamp) {
-    var millisInDay = 1000 * 60 * 60 * 24;
-    var startOfDay = new Date(timeStamp.getFullYear(), timeStamp.getMonth(), timeStamp.getDate() )
-    var dFromStartOfDay = timeStamp - startOfDay;
-    return dFromStartOfDay / millisInDay;
-}
-
-function getTimelineRatio(timeStamp, startOfTimeline, endOfTimeline) {
-    var millisInTimeline = endOfTimeline - startOfTimeline;
-    var dFromStartOfTimeline = timeStamp - startOfTimeline;
-    return dFromStartOfTimeline / millisInTimeline;
-}
-
-
-// function getDFromStartOfDay(timeStamp) {
-//     var startOfDay = new Date(timeStamp.getFullYear(), timeStamp.getMonth(), timeStamp.getDate() )
-//     return timeStamp - startOfDay;
-// }
-
-// function getDFromStartOfTimeline(timeStamp, startOfTimeline) {
-//     return timeStamp - startOfTimeline;
-// }
-
-// function get_spiral_pos(dayRatio, timelineRatio) {
-//     var angle = dayRatio * TWO_PI;
-
-//     var inner = 100;
-//     var spacing = 8000;
-
-//     var xpos = (inner + timelineRatio / spacing) * cos(angle);
-//     var ypos = (inner + timelineRatio / spacing) * sin(angle);
-    
-//     // return angle;
-//     return {x: xpos, y: ypos};
-// }
 
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
