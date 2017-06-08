@@ -86,7 +86,7 @@ function draw() {
         timelineConstructed =  true;
     } else if (timelineConstructed) {
         let timeline_positions = get_spiral_logarithmic(myTimeline.angles);
-        drawSpiral(timeline_positions, 180);
+        drawSpiral(timeline_positions, 180, true, false);
     }
 }
 
@@ -149,7 +149,7 @@ function get_spiral_logarithmic(angles) {
         });
 }
 
-function drawSpiral(position_objects, hue, draw_points=true) {
+function drawSpiral(position_objects, hue, draw_points=true, draw_lines=true) {
     position_objects.map(function(value, index, array) {
 
         let lightness = map(value.angle, array[0].angle, array[array.length-1].angle, 0, 80);
@@ -160,12 +160,14 @@ function drawSpiral(position_objects, hue, draw_points=true) {
             ellipse(value.x, value.y, value.radius * 0.8, value.radius * 0.8);
             noFill();
         }
-        stroke(point_color);
+        if (draw_lines) {
+            stroke(line_color);
         line(
             value.x_prev, value.y_prev,
             value.x, value.y
         )
         noStroke();
+        }
         return value;
     });
 }
