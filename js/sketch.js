@@ -151,9 +151,10 @@ function get_spiral_logarithmic(angles) {
 
 function drawSpiral(position_objects, hue, draw_points=true, draw_lines=true) {
     position_objects.map(function(value, index, array) {
-
-        let lightness = map(value.angle, array[0].angle, array[array.length-1].angle, 0, 80);
-        let point_color = hslaToP5RGBA([hue, 100, lightness, 255]);
+        let alpha = map(value.angle, array[0].angle, array[array.length-1].angle, 0, 255);
+        let lightness = map(value.angle, array[0].angle, array[array.length-1].angle, 0, 70);
+        let point_color = hslaToP5RGBA([hue, 100, lightness, alpha]);
+        let line_color = hslaToP5RGBA([hue, 100, 70, alpha]);
         
         if (draw_points) {
             fill(point_color);
