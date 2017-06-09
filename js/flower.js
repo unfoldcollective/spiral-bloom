@@ -2,6 +2,7 @@ function Flower(position, settings) {
     let self = this;
     self.position = position;
     self.settings = settings;
+    self.settings.carpel_radius = self.settings.carpel_size;
 
     self.sepals = {};
     self.sepals.color = [
@@ -86,6 +87,14 @@ function Flower(position, settings) {
         carpel_c_lightness,
         carpel_opacity,
     ];
+    self.carpel.positions = 
+        _.shuffle(_.range(self.settings.carpel_amount))
+        .map(function(value) {
+            return getPosOnCircle(self.position, progress * self.settings.carpel_radius, rotation, self.settings.carpel_amount, value);
+        })
+        .map(function(value) {
+            return get_leaf_positions(value, self.position, progress * self.settings.carpel_size, self.settings.carpel_nPoints, self.settings.carpel_noiseFactor);
+        });
 
     self.stamens = {};
     self.stamens.color = [
@@ -137,20 +146,11 @@ function Flower(position, settings) {
             curveTightness(self.settings.curve_tightness);
         });
 
-        var carpel_positions = 
-            _.shuffle(_.range(self.settings.carpel_amount))
-            .map(function(value) {
-                return getPosOnCircle(self.position, progress * self.settings.carpel_radius, rotation, self.settings.carpel_amount, value);
-            })
-            .map(function(value) {
-                return get_leaf_positions(value, self.position, progress * self.settings.carpel_size, self.settings.carpel_nPoints, self.settings.carpel_noiseFactor);
-            })
-            .map(function(value) {
+        self.carpel.positions.map(function(value) {
                 let carpel_color = [self.carpel.color[0], self.carpel.color[1], noisify(self.carpel.color[2], self.settings.lightness_noise_scale, self.settings.carpel_noiseFactor), self.carpel.color[3] ];
                 curveTightness(self.settings.carpel_curve_tightness);
                 draw_leaf_from_pos(value, carpel_color);
                 curveTightness(self.settings.curve_tightness);
-                return value;
             });
 
         var stamens_positions = 
