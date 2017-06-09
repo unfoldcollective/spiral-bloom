@@ -356,7 +356,7 @@ function Timeline(jsonInput) {
 
     // TODO: change minDate to be 7 days from NOW, rather than lastDate
     self.minDate = new Date(lastDate);
-    self.minDate.setDate(lastDate.getDate() - 0.1);
+    self.minDate.setDate(lastDate.getDate() - 1);
     // self.minDate = new Date(firstDate);
 
     self.angles = self.events
