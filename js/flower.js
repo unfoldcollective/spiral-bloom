@@ -103,6 +103,24 @@ function Flower(position, settings) {
         stamens_c_lightness,
         self.settings.opacity,
     ];
+    
+    self.stamens.parts =
+        _.shuffle(_.range(self.settings.stamens_amount))
+        .map(function(value) {
+            return getPosOnCircle(self.position, progress * self.settings.stamens_radius, rotation, self.settings.stamens_amount, value);
+        })
+        .map(function(center) {
+            let center_pos_noisified = noisify_pos(center, progress * self.settings.stamens_radius, self.settings.stamens_noiseFactor);
+            let center_pos_closer = p5.Vector.lerp(center_pos_noisified, self.position, self.settings.stamens_size/self.settings.stamens_radius);
+            let leaf_positions = get_leaf_positions(center_pos_noisified, center_pos_closer, progress * self.settings.stamens_size, self.settings.stamens_nPoints, self.settings.stamens_noiseFactor);
+            let stem_positions = [self.position, center_pos_closer];
+            let stamens_color = [self.stamens.color[0], self.stamens.color[1], noisify(self.stamens.color[2], self.settings.lightness_noise_scale, self.settings.stamens_noiseFactor*0.5), self.stamens.color[3] ];
+            return {
+                leaf_pos: leaf_positions,
+                stem_pos: stem_positions,
+                color:    stamens_color,
+            }
+        });
 
     // Draw Flower
     this.draw = function () {
@@ -153,22 +171,11 @@ function Flower(position, settings) {
             // curveTightness(self.settings.curve_tightness);
         });
 
-        var stamens_positions = 
-            _.shuffle(_.range(self.settings.stamens_amount))
-            .map(function(value) {
-                return getPosOnCircle(self.position, progress * self.settings.stamens_radius, rotation, self.settings.stamens_amount, value);
-            })
-            .map(function(value) {
-                let center_pos_noisified = noisify_pos(value, progress * self.settings.stamens_radius, self.settings.stamens_noiseFactor);
-                let center_pos_closer = p5.Vector.lerp(center_pos_noisified, self.position, self.settings.stamens_size/self.settings.stamens_radius);
-                let leaf_positions = get_leaf_positions(center_pos_noisified, center_pos_closer, progress * self.settings.stamens_size, self.settings.stamens_nPoints, self.settings.stamens_noiseFactor);
-                let stamens_color = [self.stamens.color[0], self.stamens.color[1], noisify(self.stamens.color[2], self.settings.lightness_noise_scale, self.settings.stamens_noiseFactor*0.5), self.stamens.color[3] ];
-                curveTightness(self.settings.stamens_curve_tightness);
-                draw_stem(self.position, center_pos_closer, stamens_color, self.settings.stamens_noiseFactor);
-                draw_leaf_from_pos(leaf_positions, stamens_color);
-                // curveTightness(self.settings.curve_tightness);
-                return leaf_positions;
-            });
+        self.stamens.parts.map(function(part) {
+            curveTightness(self.settings.stamens_curve_tightness);
+            draw_stem(part.stem_pos[0], part.stem_pos[1], part.color, self.settings.stamens_noiseFactor);
+            draw_leaf_from_pos(part.leaf_pos, part.color);
+        });
 
     }
 
