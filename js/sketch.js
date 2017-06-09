@@ -454,6 +454,8 @@ function get_global_settings() {
         'hue_noise_scale': hue_noise_scale,
         'lightness_noise_scale': lightness_noise_scale,
         'curve_tightness': curve_tightness,
+        'rotation': rotation,
+        'progress': progress,
 
         'sepals_amount': sepals_amount,
         'sepals_radius': sepals_radius,
