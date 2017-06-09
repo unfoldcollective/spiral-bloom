@@ -106,7 +106,7 @@ function Flower(position, settings) {
 
     // Draw Flower
     this.draw = function () {
-        curveTightness(self.settings.curve_tightness)
+        // curveTightness(self.settings.curve_tightness);
 
         self.settings.carpel_radius = self.settings.carpel_size;
         
@@ -114,7 +114,7 @@ function Flower(position, settings) {
             let sepals_color = [self.sepals.color[0], self.sepals.color[1], noisify(self.sepals.color[2], self.settings.lightness_noise_scale, self.settings.sepals_noiseFactor), self.sepals.color[3] ];
             curveTightness(self.settings.sepals_curve_tightness);
             draw_leaf_from_pos(value, sepals_color);
-            curveTightness(self.settings.curve_tightness);
+            // curveTightness(self.settings.curve_tightness);
             return value;
         });
 
@@ -123,13 +123,13 @@ function Flower(position, settings) {
             let petals_color1 = [self.petals.color1[0], self.petals.color1[1], noisify(self.petals.color1[2], self.settings.lightness_noise_scale, 1) * 0.6, self.petals.color1[3] ];
             curveTightness(self.settings.petals_curve_tightness);
             draw_leaf_from_pos(value,  petals_color1);
-            curveTightness(self.settings.curve_tightness);
+            // curveTightness(self.settings.curve_tightness);
         });
         self.petals.level1.layer2.positions.map(function(value) {
             let petals_color2 = [self.petals.color2[0], self.petals.color2[1], noisify(self.petals.color2[2], self.settings.lightness_noise_scale, 1) * 0.6, self.petals.color2[3] ];
             curveTightness(self.settings.petals_curve_tightness);
             draw_leaf_from_pos(value,  petals_color2);
-            curveTightness(self.settings.curve_tightness);
+            // curveTightness(self.settings.curve_tightness);
         });
 
         // petals level 2
@@ -137,21 +137,21 @@ function Flower(position, settings) {
             let petals_color1 = [self.petals.color1[0], self.petals.color1[1], noisify(self.petals.color1[2], self.settings.lightness_noise_scale, 1), self.petals.color1[3] ];
             curveTightness(self.settings.petals_curve_tightness);
             draw_leaf_from_pos(value,  petals_color1);
-            curveTightness(self.settings.curve_tightness);
+            // curveTightness(self.settings.curve_tightness);
         });
         self.petals.level2.layer2.positions.map(function(value) {
             let petals_color2 = [self.petals.color2[0], self.petals.color2[1], noisify(self.petals.color2[2], self.settings.lightness_noise_scale, 1), self.petals.color2[3] ];
             curveTightness(self.settings.petals_curve_tightness);
             draw_leaf_from_pos(value,  petals_color2);
-            curveTightness(self.settings.curve_tightness);
+            // curveTightness(self.settings.curve_tightness);
         });
 
         self.carpel.positions.map(function(value) {
-                let carpel_color = [self.carpel.color[0], self.carpel.color[1], noisify(self.carpel.color[2], self.settings.lightness_noise_scale, self.settings.carpel_noiseFactor), self.carpel.color[3] ];
-                curveTightness(self.settings.carpel_curve_tightness);
-                draw_leaf_from_pos(value, carpel_color);
-                curveTightness(self.settings.curve_tightness);
-            });
+            let carpel_color = [self.carpel.color[0], self.carpel.color[1], noisify(self.carpel.color[2], self.settings.lightness_noise_scale, self.settings.carpel_noiseFactor), self.carpel.color[3] ];
+            curveTightness(self.settings.carpel_curve_tightness);
+            draw_leaf_from_pos(value, carpel_color);
+            // curveTightness(self.settings.curve_tightness);
+        });
 
         var stamens_positions = 
             _.shuffle(_.range(self.settings.stamens_amount))
@@ -166,7 +166,7 @@ function Flower(position, settings) {
                 curveTightness(self.settings.stamens_curve_tightness);
                 draw_stem(self.position, center_pos_closer, stamens_color, self.settings.stamens_noiseFactor);
                 draw_leaf_from_pos(leaf_positions, stamens_color);
-                curveTightness(self.settings.curve_tightness);
+                // curveTightness(self.settings.curve_tightness);
                 return leaf_positions;
             });
 
