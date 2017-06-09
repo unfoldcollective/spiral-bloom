@@ -320,18 +320,21 @@ function draw() {
             });
         console.log("flower_spiral constructed of length:");
         console.log(flower_spiral.length)
+        console.time("first_drawing");
         flower_spiral.map(function(flower) {
             // let globalSettings = get_global_settings();
             // flower.update_settings(globalSettings);
             flower.draw(); 
         });
+        console.timeEnd("first_drawing");
     } else if (timelineConstructed) {
+        console.time("drawing");
         flower_spiral.map(function(flower) {
             // let globalSettings = get_global_settings();
             // flower.update_settings(globalSettings);
             flower.draw(); 
         });
-        console.log("flower_spiral drawn");
+        console.timeEnd("drawing");
     }
 }
 
