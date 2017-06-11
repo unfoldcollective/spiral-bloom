@@ -195,6 +195,8 @@ var guiLogarithmic;
 var spiral_logarithmic;
 var flower_spiral;
 
+var useNoLoop = false;
+
 p5.disableFriendlyErrors = true;
 
 
@@ -297,14 +299,18 @@ function setup() {
 
     // load timeline data
     // $.getJSON("../data/timeline-170503-232226.json", function(json) {
-    $.getJSON("../data/sample.json", function(json) {
+    $.getJSON("../data/sample-9returns.json", function(json) {
+    // $.getJSON("../data/sample.json", function(json) {
         // myActivitySpiral = new ActivitySpiral(json);
         jsonInput = json;
         JSONloaded = true;
     });
 
     // Don't loop automatically
-    noLoop();
+    useNoLoop = true;
+    if (useNoLoop) {
+        noLoop();
+    }
 }
 
 function draw() {
@@ -334,14 +340,15 @@ function draw() {
         console.timeEnd("first_drawing");
     } else if (timelineConstructed) {
         console.time("drawing");
-        
-        // flower_spiral.map(function(flower) {
-        //     // let globalSettings = get_global_settings();
-        //     // flower.update_settings(globalSettings);
-        //     flower.draw(); 
-        // });
-
-        for (var i = 0; i < 10; i++) {
+        if (useNoLoop) {
+            for (var i = 0; i < 10; i++) {
+                flower_spiral.map(function(flower) {
+                    // let globalSettings = get_global_settings();
+                    // flower.update_settings(globalSettings);
+                    flower.draw(); 
+                });
+            }
+        } else {
             flower_spiral.map(function(flower) {
                 // let globalSettings = get_global_settings();
                 // flower.update_settings(globalSettings);
