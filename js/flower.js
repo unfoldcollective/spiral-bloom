@@ -113,12 +113,19 @@ function Flower(position, settings) {
             let center_pos_noisified = noisify_pos(center, progress * self.settings.stamens_radius, self.settings.stamens_noiseFactor);
             let center_pos_closer = p5.Vector.lerp(center_pos_noisified, self.position, self.settings.stamens_size/self.settings.stamens_radius);
             let leaf_positions = get_leaf_positions(center_pos_noisified, center_pos_closer, progress * self.settings.stamens_size, self.settings.stamens_nPoints, self.settings.stamens_noiseFactor);
-            let stem_positions = [self.position, center_pos_closer];
-            let stamens_color = [self.stamens.color[0], self.stamens.color[1], noisify(self.stamens.color[2], self.settings.lightness_noise_scale, self.settings.stamens_noiseFactor*0.5), self.stamens.color[3] ];
+            
+            let d = dist(self.position.x, self.position.y, center_pos_closer.x, center_pos_closer.y);
+            let stem_positions = [
+                noisify_pos(self.position, d, self.settings.stamens_noiseFactor).x, noisify_pos(self.position, d, self.settings.stamens_noiseFactor).y, 
+                self.position.x, self.position.y, 
+                center_pos_closer.x, center_pos_closer.y, 
+                noisify_pos(center_pos_closer, d, self.settings.stamens_noiseFactor).x, noisify_pos(center_pos_closer, d, self.settings.stamens_noiseFactor).y
+            ];
+            let color = [self.stamens.color[0], self.stamens.color[1], noisify(self.stamens.color[2], self.settings.lightness_noise_scale, self.settings.stamens_noiseFactor*0.5), self.stamens.color[3] ];
             return {
-                leaf_pos: leaf_positions,
-                stem_pos: stem_positions,
-                color:    stamens_color,
+                leaf_positions: leaf_positions,
+                stem_positions: stem_positions,
+                color:          color,
             }
         });
 
@@ -163,8 +170,8 @@ function Flower(position, settings) {
 
         self.stamens.parts.map(function(part) {
             curveTightness(self.settings.stamens_curve_tightness);
-            draw_stem(part.stem_pos[0], part.stem_pos[1], part.color, self.settings.stamens_noiseFactor);
-            draw_leaf_from_pos(part.leaf_pos, part.color);
+            draw_stem_from_pos(part.stem_positions, part.color);
+            draw_leaf_from_pos(part.leaf_positions, part.color);
         });
 
     }
@@ -195,14 +202,13 @@ function draw_leaf_from_pos(positions, colorHSLA) {
     noFill();    
 }
 
-function draw_stem(fromPos, toPos, colorHSLA, noiseFactor) {
+function draw_stem_from_pos(positions, colorHSLA) {
     stroke(hslaToP5RGBA(colorHSLA));
-    var d = dist(fromPos.x, fromPos.y, toPos.x, toPos.y);
     curve(
-        noisify_pos(fromPos, d, noiseFactor).x, noisify_pos(fromPos, d, noiseFactor).y, 
-        fromPos.x, fromPos.y, 
-        toPos.x, toPos.y, 
-        noisify_pos(toPos, d, noiseFactor).x, noisify_pos(toPos, d, noiseFactor).y
+        positions[0], positions[1],
+        positions[2], positions[3],
+        positions[4], positions[5],
+        positions[6], positions[7],
     );
     noStroke();
 }
