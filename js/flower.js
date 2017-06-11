@@ -156,11 +156,11 @@ function Flower(position, settings) {
         });
 
         // petals level 1
-        self.petals.parts.map(function(part) {
-            curveTightness(self.settings.petals_curve_tightness);
-            draw_leaf_from_pos(part.layer1.positions,  part.layer1.color);
-            draw_leaf_from_pos(part.layer2.positions,  part.layer2.color);
-        });
+        // self.petals.parts.map(function(part) {
+        //     curveTightness(self.settings.petals_curve_tightness);
+        //     draw_leaf_from_pos(part.layer1.positions,  part.layer1.color);
+        //     draw_leaf_from_pos(part.layer2.positions,  part.layer2.color);
+        // });
         // petals level 2
         self.petals.parts2.map(function(part) {
             curveTightness(self.settings.petals_curve_tightness);
