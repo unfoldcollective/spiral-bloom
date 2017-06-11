@@ -131,6 +131,7 @@ function Flower(position, settings) {
         .map(function(center) {
             let center_pos_noisified = noisify_pos(center, progress * self.settings.stamens_radius, self.settings.stamens_noiseFactor);
             let center_pos_closer = p5.Vector.lerp(center_pos_noisified, self.position, self.settings.stamens_size/self.settings.stamens_radius);
+            // let center_pos_closer = center;
             let leaf_positions = get_leaf_positions(center_pos_noisified, center_pos_closer, progress * self.settings.stamens_size, self.settings.stamens_nPoints, self.settings.stamens_noiseFactor);
             
             let d = dist(self.position.x, self.position.y, center_pos_closer.x, center_pos_closer.y);
@@ -176,7 +177,8 @@ function Flower(position, settings) {
         self.stamens.parts.map(function(part) {
             curveTightness(self.settings.stamens_curve_tightness);
             draw_stem_from_pos(part.stem_positions, part.color);
-            draw_leaf_from_pos(part.leaf_positions, part.color);
+            draw_leaf_ellipse(part.stem_positions[4], part.stem_positions[5], self.settings.stamens_size * 0.3, self.settings.stamens_size * 0.3, part.color);
+            // draw_leaf_from_pos(part.leaf_positions, part.color);
         });
 
     }
@@ -205,6 +207,12 @@ function draw_leaf_from_pos(positions, colorHSLA) {
     drawSplineLoop(positions);
     noStroke();
     noFill();    
+}
+
+function draw_leaf_ellipse(center_x, center_y, width, height, colorHSLA) {
+    fill(hslaToP5RGBA(colorHSLA));
+    stroke(hslaToP5RGBA([colorHSLA[0], colorHSLA[1], colorHSLA[2] * 0.3, colorHSLA[3] * 0.3 ]));
+    ellipse(center_x, center_y, width, height);
 }
 
 function draw_stem_from_pos(positions, colorHSLA) {
