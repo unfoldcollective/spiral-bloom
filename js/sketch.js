@@ -1,3 +1,6 @@
+var useNoLoop = false;
+var useNoLoop = true;
+
 // gui params
 
 var opacity = 220;
@@ -195,8 +198,6 @@ var guiLogarithmic;
 var spiral_logarithmic;
 var flower_spiral;
 
-var useNoLoop = false;
-
 p5.disableFriendlyErrors = true;
 
 
@@ -307,7 +308,6 @@ function setup() {
     });
 
     // Don't loop automatically
-    useNoLoop = true;
     if (useNoLoop) {
         noLoop();
     }
@@ -339,7 +339,7 @@ function draw() {
         });
         console.timeEnd("first_drawing");
     } else if (timelineConstructed) {
-        console.time("drawing");
+        console.time("flower.draw");
         if (useNoLoop) {
             for (var i = 0; i < 10; i++) {
                 flower_spiral.map(function(flower) {
@@ -355,7 +355,7 @@ function draw() {
                 flower.draw(); 
             });
         }
-        console.timeEnd("drawing");
+        console.timeEnd("flower.draw");
     }
 }
 
