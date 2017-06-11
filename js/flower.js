@@ -102,13 +102,18 @@ function Flower(position, settings) {
         carpel_c_lightness,
         carpel_opacity,
     ];
-    self.carpel.positions = 
+    self.carpel.parts =
         _.shuffle(_.range(self.settings.carpel_amount))
         .map(function(value) {
             return getPosOnCircle(self.position, progress * self.settings.carpel_radius, rotation, self.settings.carpel_amount, value);
         })
         .map(function(value) {
-            return get_leaf_positions(value, self.position, progress * self.settings.carpel_size, self.settings.carpel_nPoints, self.settings.carpel_noiseFactor);
+            let positions = get_leaf_positions(value, self.position, progress * self.settings.carpel_size, self.settings.carpel_nPoints, self.settings.carpel_noiseFactor);
+            let color = [self.carpel.color[0], self.carpel.color[1], noisify(self.carpel.color[2], self.settings.lightness_noise_scale, self.settings.carpel_noiseFactor), self.carpel.color[3] ];
+            return {
+                positions: positions,
+                color: color,
+            }
         });
 
     self.stamens = {};
@@ -118,7 +123,6 @@ function Flower(position, settings) {
         stamens_c_lightness,
         self.settings.opacity,
     ];
-    
     self.stamens.parts =
         _.shuffle(_.range(self.settings.stamens_amount))
         .map(function(value) {
@@ -164,10 +168,9 @@ function Flower(position, settings) {
             draw_leaf_from_pos(part.layer2.positions,  part.layer2.color);
         });
 
-        self.carpel.positions.map(function(value) {
-            let carpel_color = [self.carpel.color[0], self.carpel.color[1], noisify(self.carpel.color[2], self.settings.lightness_noise_scale, self.settings.carpel_noiseFactor), self.carpel.color[3] ];
+        self.carpel.parts.map(function(part) {
             curveTightness(self.settings.carpel_curve_tightness);
-            draw_leaf_from_pos(value, carpel_color);
+            draw_leaf_from_pos(part.positions, part.color);
         });
 
         self.stamens.parts.map(function(part) {
