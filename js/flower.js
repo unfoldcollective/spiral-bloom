@@ -11,15 +11,20 @@ function Flower(position, settings) {
         sepals_c_lightness,
         self.settings.opacity,
     ];
-    self.sepals.positions =
+    self.sepals.parts =
         _.shuffle(_.range(self.settings.sepals_amount))
         .map(function(value) {
             var sepals_rotation = rotation + Math.PI / self.settings.sepals_amount;
             return getPosOnCircle(self.position, progress * self.settings.sepals_radius, sepals_rotation, self.settings.sepals_amount, value);
         })
-        .map(function(value) {
-            return get_leaf_positions(value, self.position, progress * self.settings.sepals_size, self.settings.sepals_nPoints, self.settings.sepals_noiseFactor);
-        });
+        .map(function(center) {
+            let positions = get_leaf_positions(center, self.position, progress * self.settings.sepals_size, self.settings.sepals_nPoints, self.settings.sepals_noiseFactor);
+            let color = [self.sepals.color[0], self.sepals.color[1], noisify(self.sepals.color[2], self.settings.lightness_noise_scale, self.settings.sepals_noiseFactor), self.sepals.color[3] ];
+            return {
+                positions: positions,
+                color: color,
+            };
+        })
     
     self.petals = {};
     self.petals.color1 = [
@@ -131,11 +136,9 @@ function Flower(position, settings) {
 
     // Draw Flower
     this.draw = function () {        
-        self.sepals.positions.map(function(value) {
-            let sepals_color = [self.sepals.color[0], self.sepals.color[1], noisify(self.sepals.color[2], self.settings.lightness_noise_scale, self.settings.sepals_noiseFactor), self.sepals.color[3] ];
+        self.sepals.parts.map(function(part) {
             curveTightness(self.settings.sepals_curve_tightness);
-            draw_leaf_from_pos(value, sepals_color);
-            return value;
+            draw_leaf_from_pos(part.positions, part.color);
         });
 
         // petals level 1
