@@ -239,8 +239,12 @@ function get_leaf_positions(center_pos, base_pos, size, nPoints, noiseFactor) {
         });
     
     var closest_index_to_base_pos = positions.reduce(function(prevVal, elem, index, array) {
-        prevDistance = dist(array[prevVal].x, array[prevVal].y, base_pos.x, base_pos.y);
-        curDistance  = dist(elem.x, elem.y, base_pos.x, base_pos.y);
+        // prevDistance = dist(array[prevVal].x, array[prevVal].y, base_pos.x, base_pos.y);
+        // curDistance  = dist(elem.x, elem.y, base_pos.x, base_pos.y);
+        // distSquared() runs faster than dist()
+        prevDistance = distSquared(array[prevVal].x, array[prevVal].y, base_pos.x, base_pos.y);
+        curDistance  = distSquared(elem.x, elem.y, base_pos.x, base_pos.y);
+
         return prevDistance < curDistance ? prevVal : index;
     }, 0);
     
@@ -310,8 +314,8 @@ function getRandomBetween(min, max) {
 function getPosOnCircle(midPosition, radius, rotation, n, index) {
     var angle = (index * TWO_PI / n) + rotation;
     return createVector(
-        midPosition.x + radius * cos(angle), 
-        midPosition.y + radius * sin(angle)
+        midPosition.x + radius * Math.cos(angle), 
+        midPosition.y + radius * Math.sin(angle)
     );
 }
 
@@ -326,4 +330,10 @@ function coin_flip(value1, value2) {
     } else {
         return value2;
     }
+}
+
+function distSquared(x1, y1, x2, y2) {
+    var dx = x2 - x1;
+    var dy = y2 - y1;
+    return dx * dx + dy * dy;
 }
