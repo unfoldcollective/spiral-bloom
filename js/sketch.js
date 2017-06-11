@@ -192,6 +192,7 @@ var colorData = [0, 255, 0];
 var guiArchimedean;
 var guiLogarithmic;
 
+var spiral_logarithmic;
 var flower_spiral;
 
 function setup() {
@@ -275,8 +276,16 @@ function setup() {
     set_gui_styles('Carpel',  {"left": (width - 200 - 240) + "px"});
     set_gui_styles('Petals',  {"left":"240px"});
     
-
+    // base spiral
     center = createVector(width * 0.5, height * 0.5);
+    let baseAngles = _.range(1000).map(function(value) {return value * 0.1});
+    spiral_logarithmic = get_spiral_logarithmic(center, baseAngles)
+        .filter(function(value, index) {
+            if (value.angle >= minLoga && value.angle <= maxLoga ) {
+                return value;
+            }
+        });
+
 
     noFill();
     noStroke();
@@ -299,20 +308,13 @@ function draw() {
     clear();
     background(0);
     
-    let baseAngles = _.range(1000).map(function(value) {return value * 0.1});
-    let spiral_logarithmic = get_spiral_logarithmic(baseAngles)
-        .filter(function(value, index) {
-            if (value.angle >= minLoga && value.angle <= maxLoga ) {
-                return value;
-            }
-        });
     drawSpiral(spiral_logarithmic, 0, draw_ellipse, false);
 
     if (JSONloaded && !timelineConstructed) {
         myTimeline = new Timeline(jsonInput);
         console.log("timeline constructed");
         timelineConstructed =  true;
-        let timeline_spiral = get_spiral_logarithmic(myTimeline.angles);
+        let timeline_spiral = get_spiral_logarithmic(center, myTimeline.angles);
         flower_spiral = timeline_spiral
             .map(function(value, index, array) {
                 let settings = get_global_settings();
@@ -371,7 +373,7 @@ function Timeline(jsonInput) {
         });
 }
 
-function get_spiral_logarithmic(angles) {
+function get_spiral_logarithmic(center, angles) {
     return angles
         .map(function(value, index, array) {
             // let fadingBlue = [0, 0, map(value, minLoga, maxLoga, 0, 255)];
