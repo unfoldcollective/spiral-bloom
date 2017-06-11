@@ -195,6 +195,9 @@ var guiLogarithmic;
 var spiral_logarithmic;
 var flower_spiral;
 
+p5.disableFriendlyErrors = true;
+
+
 function setup() {
     createCanvas(windowWidth, windowHeight);
     background(0);
