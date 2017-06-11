@@ -331,11 +331,20 @@ function draw() {
         console.timeEnd("first_drawing");
     } else if (timelineConstructed) {
         console.time("drawing");
+        
+        // flower_spiral.map(function(flower) {
+        //     // let globalSettings = get_global_settings();
+        //     // flower.update_settings(globalSettings);
+        //     flower.draw(); 
+        // });
+
+        for (var i = 0; i < 10; i++) {
         flower_spiral.map(function(flower) {
             // let globalSettings = get_global_settings();
             // flower.update_settings(globalSettings);
             flower.draw(); 
         });
+        }
         console.timeEnd("drawing");
     }
 }
