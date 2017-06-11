@@ -15,7 +15,7 @@ var background_lightnessMax = 100;
 var hue_exclude_range = 45;
 var hue_noise_scale = 100;
 var lightness_noise_scale = 50;
-var curve_tightness = 0;
+var curve_tightness = 1;
 var curve_tightnessMin = -10;
 var curve_tightnessMax = 10;
 var curve_tightnessStep = 0.1;
@@ -49,7 +49,7 @@ var sepals_c_saturationMax = 100;
 var sepals_c_lightness = 30;
 var sepals_c_lightnessMin = 0;
 var sepals_c_lightnessMax = 100;
-var sepals_nPoints = 5;
+var sepals_nPoints = 3;
 var sepals_nPointsMin = 3;
 var sepals_nPointsMax = 10;
 var sepals_noiseFactor = 1;
@@ -82,7 +82,7 @@ var petals_c2_saturationMax = 100;
 var petals_c2_lightness = 30;
 var petals_c2_lightnessMin = 0;
 var petals_c2_lightnessMax = 100;
-var petals_nPoints = 8;
+var petals_nPoints = 5;
 var petals_nPointsMin = 3;
 var petals_nPointsMax = 10;
 var petals_noiseFactor = 2;
@@ -94,9 +94,9 @@ var petals_curve_tightnessMin = -20;
 var petals_curve_tightnessMax = 10;
 var petals_curve_tightnessStep = 0.1;
 
-var stamens_amount = 40;
-var stamens_amountMin = 5;
-var stamens_amountMax = 100;
+var stamens_amount = 20;
+var stamens_amountMin = 3;
+var stamens_amountMax = 40;
 var stamens_radius = 100;
 var stamens_radiusMin = 30;
 var stamens_radiusMax = 200;
@@ -110,7 +110,7 @@ var stamens_c_saturationMax = 100;
 var stamens_c_lightness = 90;
 var stamens_c_lightnessMin = 0;
 var stamens_c_lightnessMax = 100;
-var stamens_nPoints = 5;
+var stamens_nPoints = 4;
 var stamens_nPointsMin = 3;
 var stamens_nPointsMax = 10;
 var stamens_noiseFactor = 1;
@@ -135,7 +135,7 @@ var carpel_c_saturationMax = 100;
 var carpel_c_lightness = 90;
 var carpel_c_lightnessMin = 0;
 var carpel_c_lightnessMax = 100;
-var carpel_nPoints = 9;
+var carpel_nPoints = 5;
 var carpel_nPointsMin = 3;
 var carpel_nPointsMax = 10;
 var carpel_noiseFactor = 0;
@@ -339,11 +339,11 @@ function draw() {
         // });
 
         for (var i = 0; i < 10; i++) {
-        flower_spiral.map(function(flower) {
-            // let globalSettings = get_global_settings();
-            // flower.update_settings(globalSettings);
-            flower.draw(); 
-        });
+            flower_spiral.map(function(flower) {
+                // let globalSettings = get_global_settings();
+                // flower.update_settings(globalSettings);
+                flower.draw(); 
+            });
         }
         console.timeEnd("drawing");
     }
