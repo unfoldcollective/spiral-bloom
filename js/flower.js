@@ -6,7 +6,7 @@ function Flower(position, settings) {
 
     self.sepals = {};
     self.sepals.color = [
-        self.settings.background_hue, 
+        self.settings.background_hue,
         sepals_c_saturation, 
         sepals_c_lightness,
         self.settings.opacity,
@@ -14,11 +14,11 @@ function Flower(position, settings) {
     self.sepals.parts =
         _.shuffle(_.range(self.settings.sepals_amount))
         .map(function(value) {
-            var sepals_rotation = rotation + Math.PI / self.settings.sepals_amount;
-            return getPosOnCircle(self.position, progress * self.settings.sepals_radius, sepals_rotation, self.settings.sepals_amount, value);
+            var sepals_rotation = self.settings.rotation + Math.PI / self.settings.sepals_amount;
+            return getPosOnCircle(self.position, self.settings.progress * self.settings.sepals_radius, sepals_rotation, self.settings.sepals_amount, value);
         })
         .map(function(center) {
-            let positions = get_leaf_positions(center, self.position, progress * self.settings.sepals_size, self.settings.sepals_nPoints, self.settings.sepals_noiseFactor);
+            let positions = get_leaf_positions(center, self.position, self.settings.progress * self.settings.sepals_size, self.settings.sepals_nPoints, self.settings.sepals_noiseFactor);
             let color = [self.sepals.color[0], self.sepals.color[1], noisify(self.sepals.color[2], self.settings.lightness_noise_scale, self.settings.sepals_noiseFactor), self.sepals.color[3] ];
             return {
                 positions: positions,
@@ -42,12 +42,12 @@ function Flower(position, settings) {
     self.petals.parts =
         _.shuffle(_.range(self.settings.petals_amount))
         .map(function(value) {
-            let petals1_rotation = rotation + Math.PI / self.settings.petals_amount;
-            return getPosOnCircle(self.position, progress * self.settings.petals_radius * 1.2, petals1_rotation, self.settings.petals_amount, value);
+            let petals1_rotation = self.settings.rotation + Math.PI / self.settings.petals_amount;
+            return getPosOnCircle(self.position, self.settings.progress * self.settings.petals_radius * 1.2, petals1_rotation, self.settings.petals_amount, value);
         })
         .map(function(value, index, array) {
-            let layer1_positions = get_leaf_positions(value, self.position, progress * self.settings.petals_size * 1.2, self.settings.petals_nPoints, self.settings.petals_noiseFactor);
-            let layer2_positions = get_leaf_positions(value, self.position, progress * self.settings.petals_size * 0.9, self.settings.petals_nPoints, self.settings.petals_noiseFactor);
+            let layer1_positions = get_leaf_positions(value, self.position, self.settings.progress * self.settings.petals_size * 1.2, self.settings.petals_nPoints, self.settings.petals_noiseFactor);
+            let layer2_positions = get_leaf_positions(value, self.position, self.settings.progress * self.settings.petals_size * 0.9, self.settings.petals_nPoints, self.settings.petals_noiseFactor);
             let layer1_color = [self.petals.color1[0], self.petals.color1[1], noisify(self.petals.color1[2], self.settings.lightness_noise_scale, 1) * 0.66, self.petals.color1[3] ];
             let layer2_color = [self.petals.color2[0], self.petals.color2[1], noisify(self.petals.color2[2], self.settings.lightness_noise_scale, 1) * 0.66, self.petals.color2[3] ];
             return {
@@ -65,11 +65,11 @@ function Flower(position, settings) {
     self.petals.parts2 =
         _.shuffle(_.range(self.settings.petals_amount))
         .map(function(value) {
-            return getPosOnCircle(self.position, progress * self.settings.petals_radius, rotation, self.settings.petals_amount, value);
+            return getPosOnCircle(self.position, self.settings.progress * self.settings.petals_radius, self.settings.rotation, self.settings.petals_amount, value);
         })
         .map(function(value) {
-            let layer1_positions = get_leaf_positions(value, self.position, progress * self.settings.petals_size, self.settings.petals_nPoints, self.settings.petals_noiseFactor);
-            let layer2_positions = get_leaf_positions(value, self.position, progress * self.settings.petals_size * 0.66, self.settings.petals_nPoints, self.settings.petals_noiseFactor);
+            let layer1_positions = get_leaf_positions(value, self.position, self.settings.progress * self.settings.petals_size, self.settings.petals_nPoints, self.settings.petals_noiseFactor);
+            let layer2_positions = get_leaf_positions(value, self.position, self.settings.progress * self.settings.petals_size * 0.66, self.settings.petals_nPoints, self.settings.petals_noiseFactor);
             let layer1_color = [self.petals.color1[0], self.petals.color1[1], noisify(self.petals.color1[2], self.settings.lightness_noise_scale, 1), self.petals.color1[3] ];
             let layer2_color = [self.petals.color2[0], self.petals.color2[1], noisify(self.petals.color2[2], self.settings.lightness_noise_scale, 1), self.petals.color2[3] ];
             return {
@@ -105,10 +105,10 @@ function Flower(position, settings) {
     self.carpel.parts =
         _.shuffle(_.range(self.settings.carpel_amount))
         .map(function(value) {
-            return getPosOnCircle(self.position, progress * self.settings.carpel_radius, rotation, self.settings.carpel_amount, value);
+            return getPosOnCircle(self.position, self.settings.progress * self.settings.carpel_radius, self.settings.rotation, self.settings.carpel_amount, value);
         })
         .map(function(value) {
-            let positions = get_leaf_positions(value, self.position, progress * self.settings.carpel_size, self.settings.carpel_nPoints, self.settings.carpel_noiseFactor);
+            let positions = get_leaf_positions(value, self.position, self.settings.progress * self.settings.carpel_size, self.settings.carpel_nPoints, self.settings.carpel_noiseFactor);
             let color = [self.carpel.color[0], self.carpel.color[1], noisify(self.carpel.color[2], self.settings.lightness_noise_scale, self.settings.carpel_noiseFactor), self.carpel.color[3] ];
             return {
                 positions: positions,
@@ -126,13 +126,13 @@ function Flower(position, settings) {
     self.stamens.parts =
         _.shuffle(_.range(self.settings.stamens_amount))
         .map(function(value) {
-            return getPosOnCircle(self.position, progress * self.settings.stamens_radius, rotation, self.settings.stamens_amount, value);
+            return getPosOnCircle(self.position, self.settings.progress * self.settings.stamens_radius, self.settings.rotation, self.settings.stamens_amount, value);
         })
         .map(function(center) {
-            let center_pos_noisified = noisify_pos(center, progress * self.settings.stamens_radius, self.settings.stamens_noiseFactor);
+            let center_pos_noisified = noisify_pos(center, self.settings.progress * self.settings.stamens_radius, self.settings.stamens_noiseFactor);
             let center_pos_closer = p5.Vector.lerp(center_pos_noisified, self.position, self.settings.stamens_size/self.settings.stamens_radius);
             // let center_pos_closer = center;
-            let leaf_positions = get_leaf_positions(center_pos_noisified, center_pos_closer, progress * self.settings.stamens_size, self.settings.stamens_nPoints, self.settings.stamens_noiseFactor);
+            let leaf_positions = get_leaf_positions(center_pos_noisified, center_pos_closer, self.settings.progress * self.settings.stamens_size, self.settings.stamens_nPoints, self.settings.stamens_noiseFactor);
             
             let d = dist(self.position.x, self.position.y, center_pos_closer.x, center_pos_closer.y);
             let stem_positions = [
