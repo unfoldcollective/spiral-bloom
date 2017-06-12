@@ -102,19 +102,26 @@ function Flower(position, settings) {
         carpel_c_lightness,
         carpel_opacity,
     ];
-    self.carpel.parts =
+    self.carpel.centers =
         _.shuffle(_.range(self.settings.carpel_amount))
         .map(function(value) {
-            return getPosOnCircle(self.position, self.settings.progress * self.settings.carpel_radius, self.settings.rotation, self.settings.carpel_amount, value);
-        })
-        .map(function(value) {
-            let positions = get_leaf_positions(value, self.position, self.settings.progress * self.settings.carpel_size, self.settings.carpel_nPoints, self.settings.carpel_noiseFactor);
             let color = [self.carpel.color[0], self.carpel.color[1], noisify(self.carpel.color[2], self.settings.lightness_noise_scale, self.settings.carpel_noiseFactor), self.carpel.color[3] ];
+            let position = getPosOnCircle(self.position, self.settings.progress * self.settings.carpel_radius, self.settings.rotation, self.settings.carpel_amount, value);
             return {
-                positions: positions,
                 color: color,
-            }
-        });
+                position: position,
+            };
+        })
+    // self.carpel.parts =
+    //     self.carpel.centers
+    //     .map(function(value) {
+    //         let positions = get_leaf_positions(value, self.position, self.settings.progress * self.settings.carpel_size, self.settings.carpel_nPoints, self.settings.carpel_noiseFactor);
+    //         let color = [self.carpel.color[0], self.carpel.color[1], noisify(self.carpel.color[2], self.settings.lightness_noise_scale, self.settings.carpel_noiseFactor), self.carpel.color[3] ];
+    //         return {
+    //             positions: positions,
+    //             color: color,
+    //         }
+    //     });
 
     self.stamens = {};
     self.stamens.color = [
@@ -169,15 +176,19 @@ function Flower(position, settings) {
             draw_leaf_from_pos(part.layer2.positions,  part.layer2.color);
         });
 
-        self.carpel.parts.map(function(part) {
+        // self.carpel.parts.map(function(part) {
+        //     curveTightness(self.settings.carpel_curve_tightness);
+        //     draw_leaf_from_pos(part.positions, part.color);
+        // });
+        self.carpel.centers.map(function(center) {
             curveTightness(self.settings.carpel_curve_tightness);
-            draw_leaf_from_pos(part.positions, part.color);
+            draw_leaf_ellipse(center.position.x, center.position.y, self.settings.progress * self.settings.carpel_size * 2, self.settings.progress * self.settings.carpel_size * 2, center.color);
         });
-
+        
         self.stamens.parts.map(function(part) {
             curveTightness(self.settings.stamens_curve_tightness);
             draw_stem_from_pos(part.stem_positions, part.color);
-            draw_leaf_ellipse(part.stem_positions[4], part.stem_positions[5], self.settings.stamens_size * 0.3, self.settings.stamens_size * 0.3, part.color);
+            draw_leaf_ellipse(part.stem_positions[4], part.stem_positions[5], self.settings.progress * self.settings.stamens_size * 0.3, self.settings.progress * self.settings.stamens_size * 0.3, part.color);
             // draw_leaf_from_pos(part.leaf_positions, part.color);
         });
 
@@ -213,6 +224,7 @@ function draw_leaf_ellipse(center_x, center_y, width, height, colorHSLA) {
     fill(hslaToP5RGBA(colorHSLA));
     stroke(hslaToP5RGBA([colorHSLA[0], colorHSLA[1], colorHSLA[2] * 0.3, colorHSLA[3] * 0.3 ]));
     ellipse(center_x, center_y, width, height);
+    noFill();
 }
 
 function draw_stem_from_pos(positions, colorHSLA) {
