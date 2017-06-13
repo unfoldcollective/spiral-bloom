@@ -9,7 +9,7 @@ var opacityMax = 255;
 var background_hue = 89;
 var background_hueMin = 0;
 var background_hueMax = 360;
-var background_saturation = 30;
+var background_saturation = 80;
 var background_saturationMin = 0;
 var background_saturationMax = 100;
 var background_lightness = 90;
@@ -79,15 +79,9 @@ var petals_sizeMax = 200;
 var petals_c_saturation = 100;
 var petals_c_saturationMin = 0;
 var petals_c_saturationMax = 100;
-var petals_c_lightness = 70;
+var petals_c_lightness = 80;
 var petals_c_lightnessMin = 0;
 var petals_c_lightnessMax = 100;
-var petals_c2_saturation = 100;
-var petals_c2_saturationMin = 0;
-var petals_c2_saturationMax = 100;
-var petals_c2_lightness = 30;
-var petals_c2_lightnessMin = 0;
-var petals_c2_lightnessMax = 100;
 var petals_nPoints = 5;
 var petals_nPointsMin = 3;
 var petals_nPointsMax = 10;
@@ -104,11 +98,11 @@ var stamens_amount = 20;
 var stamens_amountMin = 3;
 var stamens_amountMax = 40;
 var stamens_radius = 100;
-var stamens_radiusMin = 30;
+var stamens_radiusMin = 50;
 var stamens_radiusMax = 200;
 var stamens_size = 10;
-var stamens_sizeMin = 8;
-var stamens_sizeMax = 15;
+var stamens_sizeMin = 10;
+var stamens_sizeMax = 20;
 var stamens_c_hue = 10;
 var stamens_c_hueMin = 0;
 var stamens_c_hueMax = 360;
@@ -133,10 +127,12 @@ var stamens_curve_tightnessStep = 0.1;
 var carpel_amount = 3;
 var carpel_amountMin = 3;
 var carpel_amountMax = 5;
-var carpel_radius;
 var carpel_size = 10;
 var carpel_sizeMin = 5;
 var carpel_sizeMax = 20;
+var carpel_radius = carpel_size;
+var carpel_radiusMin = carpel_sizeMin;
+var carpel_radiusMax = carpel_sizeMax;
 var carpel_c_saturation = 90;
 var carpel_c_saturationMin = 0;
 var carpel_c_saturationMax = 100;
@@ -209,7 +205,7 @@ p5.disableFriendlyErrors = true;
 function setup() {
     createCanvas(windowWidth, windowHeight);
     background(hsluvToP5Rgb(background_hue, background_saturation, background_lightness));
-    frameRate(30);
+    // frameRate(30);
     smooth();
 
     /////////////////
@@ -306,7 +302,7 @@ function setup() {
     // load timeline data
     // $.getJSON("../data/timeline-170503-232226.json", function(json) {
     // $.getJSON("../data/sample-9returns.json", function(json) {
-    $.getJSON("../data/timeline-sample-4uniquetimestamps.json", function(json) {
+    $.getJSON("../data/timeline-sample-uniquetimestamps.json", function(json) {
     // $.getJSON("../data/sample.json", function(json) {
         // myActivitySpiral = new ActivitySpiral(json);
         jsonInput = json;
@@ -506,8 +502,6 @@ function get_global_settings() {
         'petals_size': petals_size,
         'petals_c_saturation': petals_c_saturation,
         'petals_c_lightness': petals_c_lightness,
-        'petals_c2_saturation': petals_c2_saturation,
-        'petals_c2_lightness': petals_c2_lightness,
         'petals_nPoints': petals_nPoints,
         'petals_noiseFactor': petals_noiseFactor,
         'petals_curve_tightness': petals_curve_tightness,
@@ -535,7 +529,7 @@ function get_global_settings() {
 }
 
 function map_return_to_flower_settings(returnedItem, angle) {
-    return {
+    mapped_settings =  {
         'opacity': opacity,
         'background_hue': background_hue,
         'hue_exclude_range': hue_exclude_range,
@@ -545,29 +539,27 @@ function map_return_to_flower_settings(returnedItem, angle) {
         'rotation': angle,
         'progress': 0.5,
 
-        'sepals_amount': 2 + returnedItem['publisher_n_words'],
-        'sepals_radius': map(returnedItem['publisher_length'], 0, 30, sepals_radiusMin, sepals_radiusMax),
-        'sepals_size': map(returnedItem['publisher_avg_word_length'], 3, 12, sepals_sizeMin, sepals_sizeMax),
+        'sepals_amount': 2 + returnedItem['publisher_n_words'] || sepals_amountMin,
+        'sepals_radius': map(returnedItem['publisher_length'], 0, 30, sepals_radiusMin, sepals_radiusMax) || sepals_radiusMin,
+        'sepals_size': map(returnedItem['publisher_avg_word_length'], 3, 12, sepals_sizeMin, sepals_sizeMax) || sepals_sizeMin,
         'sepals_noiseFactor': returnedItem['in_stock_since_years_ago'],
         'sepals_curve_tightness': returnedItem['years_ago'],
         'sepals_c_saturation': sepals_c_saturation,
         'sepals_c_lightness': sepals_c_lightness,
         'sepals_nPoints': sepals_nPoints,
 
-        'petals_amount': 2 + returnedItem['title_n_words'],
-        'petals_radius': map(returnedItem['title_length'], 2, 60, petals_radiusMin, petals_radiusMax),
-        'petals_size': map(returnedItem['title_avg_word_length'], 2, 15, petals_sizeMin, petals_sizeMax),
+        'petals_amount': 2 + returnedItem['title_n_words'] || petals_amountMin,
+        'petals_radius': map(returnedItem['title_length'], 2, 60, petals_radiusMin, petals_radiusMax) || petals_radiusMin,
+        'petals_size': map(returnedItem['title_avg_word_length'], 2, 15, petals_sizeMin, petals_sizeMax) || petals_sizeMin,
         'petals_noiseFactor': returnedItem['in_stock_since_years_ago'],
         'petals_curve_tightness': returnedItem['years_ago'],
         'petals_c_saturation': petals_c_saturation,
         'petals_c_lightness': petals_c_lightness,
-        'petals_c2_saturation': petals_c2_saturation,
-        'petals_c2_lightness': petals_c2_lightness,
         'petals_nPoints': petals_nPoints,
 
-        'stamens_amount': constrain(map(returnedItem['description_n_words'], 0, 250, stamens_amountMin, stamens_amountMax), stamens_amountMin, stamens_amountMax),
-        'stamens_radius': constrain(map(returnedItem['description_length'], 0, 1500, stamens_radiusMin, stamens_radiusMax), stamens_radiusMin, stamens_radiusMax),
-        'stamens_size': map(returnedItem['description_avg_word_length'], 4, 10, stamens_sizeMin, stamens_sizeMax),
+        'stamens_amount': constrain(map(returnedItem['description_n_words'], 0, 250, stamens_amountMin, stamens_amountMax), stamens_amountMin, stamens_amountMax) || stamens_amountMin,
+        'stamens_radius': constrain(map(returnedItem['description_length'], 0, 1500, stamens_radiusMin, stamens_radiusMax), stamens_radiusMin, stamens_radiusMax) || stamens_radiusMin,
+        'stamens_size': map(returnedItem['description_avg_word_length'], 4, 10, stamens_sizeMin, stamens_sizeMax) || stamens_sizeMin,
         'stamens_noiseFactor': returnedItem['in_stock_since_years_ago'],
         'stamens_curve_tightness': returnedItem['years_ago'],
         'stamens_c_hue': stamens_c_hue,
@@ -575,9 +567,9 @@ function map_return_to_flower_settings(returnedItem, angle) {
         'stamens_c_lightness': stamens_c_lightness,
         'stamens_nPoints': stamens_nPoints,
 
-        'carpel_amount': 2 + returnedItem['author_n_words'],
-        'carpel_radius': map(returnedItem['author_length'], 0, 28, carpel_sizeMin, carpel_sizeMax),
-        'carpel_size': map(returnedItem['author_length'], 0, 28, carpel_sizeMin, carpel_sizeMax),
+        'carpel_amount': 1 + returnedItem['author_n_words'] || carpel_amountMin,
+        'carpel_radius': map(returnedItem['author_length'], 0, 28, carpel_sizeMin, carpel_sizeMax) || carpel_sizeMin,
+        'carpel_size': map(returnedItem['author_length'], 0, 28, carpel_sizeMin, carpel_sizeMax) || carpel_sizeMin,
         'carpel_noiseFactor': returnedItem['in_stock_since_years_ago'],
         'carpel_curve_tightness': returnedItem['years_ago'],
         'carpel_c_saturation': carpel_c_saturation,
@@ -585,6 +577,7 @@ function map_return_to_flower_settings(returnedItem, angle) {
         'carpel_nPoints': carpel_nPoints,
         'carpel_opacity': carpel_opacity,
     };
+    return mapped_settings;
 }
 
 // event handlers

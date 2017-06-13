@@ -126,8 +126,8 @@ function Flower(position, settings) {
     self.stamens = {};
     self.stamens.color = [
         complement_circular(self.petals.color1[0]),
-        stamens_c_saturation,
-        stamens_c_lightness,
+        self.settings.stamens_c_saturation,
+        self.settings.stamens_c_lightness,
         self.settings.opacity,
     ];
     self.stamens.parts =
@@ -188,7 +188,7 @@ function Flower(position, settings) {
         self.stamens.parts.map(function(part) {
             curveTightness(self.settings.stamens_curve_tightness);
             draw_stem_from_pos(part.stem_positions, part.color);
-            draw_leaf_ellipse(part.stem_positions[4], part.stem_positions[5], self.settings.progress * self.settings.stamens_size * 0.3, self.settings.progress * self.settings.stamens_size * 0.3, part.color);
+            draw_leaf_ellipse(part.stem_positions[4], part.stem_positions[5], self.settings.progress * self.settings.stamens_size, self.settings.progress * self.settings.stamens_size, part.color);
             // draw_leaf_from_pos(part.leaf_positions, part.color);
         });
 
@@ -224,6 +224,7 @@ function draw_leaf_ellipse(center_x, center_y, width, height, colorHSLA) {
     fill(hslaToP5RGBA(colorHSLA));
     stroke(hslaToP5RGBA([colorHSLA[0], colorHSLA[1], colorHSLA[2] * 0.3, colorHSLA[3] * 0.3 ]));
     ellipse(center_x, center_y, width, height);
+    noStroke();
     noFill();
 }
 
