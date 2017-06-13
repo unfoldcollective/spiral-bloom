@@ -7,8 +7,8 @@ function Flower(position, settings) {
     self.sepals = {};
     self.sepals.color = [
         self.settings.background_hue,
-        sepals_c_saturation, 
-        sepals_c_lightness,
+        self.settings.sepals_c_saturation, 
+        self.settings.sepals_c_lightness,
         self.settings.opacity,
     ];
     self.sepals.parts =
@@ -29,13 +29,13 @@ function Flower(position, settings) {
     self.petals = {};
     self.petals.color1 = [
         random_hue_excluding(self.settings.background_hue, self.settings.hue_exclude_range),
-        petals_c_saturation,
-        coin_flip(petals_c_lightness, complement_linear(petals_c_lightness, 100)),
+        self.settings.petals_c_saturation,
+        coin_flip(self.settings.petals_c_lightness, complement_linear(self.settings.petals_c_lightness, 100)),
         self.settings.opacity,
     ];
     self.petals.color2 = [
         normalise_to_hue(noisify(self.petals.color1[0], self.settings.hue_noise_scale, petals_noiseFactor)),
-        petals_c_saturation,
+        self.settings.petals_c_saturation,
         complement_linear(self.petals.color1[2], 100),
         self.settings.opacity,
     ];
@@ -98,9 +98,9 @@ function Flower(position, settings) {
     self.carpel = {};
     self.carpel.color = [
         complement_circular(self.petals.color1[0]),
-        carpel_c_saturation,
-        carpel_c_lightness,
-        carpel_opacity,
+        self.settings.carpel_c_saturation,
+        self.settings.carpel_c_lightness,
+        self.settings.carpel_opacity,
     ];
     self.carpel.centers =
         _.shuffle(_.range(self.settings.carpel_amount))
