@@ -9,7 +9,7 @@ var opacityMax = 255;
 var background_hue = 89;
 var background_hueMin = 0;
 var background_hueMax = 360;
-var background_saturation = 50;
+var background_saturation = 30;
 var background_saturationMin = 0;
 var background_saturationMax = 100;
 var background_lightness = 90;
@@ -27,12 +27,15 @@ var seedDelta = 0.01; // Steps of 0.005-0.03 work best for most applications
 var seedDeltaMin = 0.001;
 var seedDeltaMax = 0.1;
 var seedDeltaStep = 0.001;
+var spiral_hue = background_hue;
+var spiral_saturation = background_saturation;
+var spiral_lightness = 10;
 
 var rotation = 0;
 var rotationMin = 0;
 var rotationMax = 2 * Math.PI;
 var rotationStep = 0.01 * Math.PI;
-var progress = 0.2;
+var progress = 1;
 var progressMin = 0;
 var progressMax = 1;
 var progressStep = 0.01;
@@ -41,7 +44,7 @@ var sepals_amount = 3;
 var sepals_amountMin = 3;
 var sepals_amountMax = 20;
 var sepals_radius = 250;
-var sepals_radiusMin = 0;
+var sepals_radiusMin = 10;
 var sepals_radiusMax = 500;
 var sepals_size = 40;
 var sepals_sizeMin = 10;
@@ -92,7 +95,7 @@ var petals_noiseFactor = 2;
 var petals_noiseFactorMin = 0;
 var petals_noiseFactorMax = 4;
 var petals_noiseFactorStep = 0.1;
-var petals_curve_tightness = 0;
+var petals_curve_tightness = 4;
 var petals_curve_tightnessMin = -20;
 var petals_curve_tightnessMax = 10;
 var petals_curve_tightnessStep = 0.1;
@@ -104,6 +107,8 @@ var stamens_radius = 100;
 var stamens_radiusMin = 30;
 var stamens_radiusMax = 200;
 var stamens_size = 10;
+var stamens_sizeMin = 8;
+var stamens_sizeMax = 15;
 var stamens_c_hue = 10;
 var stamens_c_hueMin = 0;
 var stamens_c_hueMax = 360;
@@ -186,7 +191,7 @@ var b2Min = 0;
 var b2Max = 0.2;
 var b2Step = 0.001;
 var colorLoga = [0, 0, 255];
-var minLoga = 0;
+var minLoga = 6 * Math.PI * 2;
 var maxLoga = 7 * Math.PI * 2;
 var maxLogaStep = 0.01;
 
@@ -203,7 +208,7 @@ p5.disableFriendlyErrors = true;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    background(0);
+    background(hsluvToP5Rgb(background_hue, background_saturation, background_lightness));
     frameRate(30);
     smooth();
 
@@ -300,7 +305,8 @@ function setup() {
 
     // load timeline data
     // $.getJSON("../data/timeline-170503-232226.json", function(json) {
-    $.getJSON("../data/sample-9returns.json", function(json) {
+    // $.getJSON("../data/sample-9returns.json", function(json) {
+    $.getJSON("../data/timeline-sample-4uniquetimestamps.json", function(json) {
     // $.getJSON("../data/sample.json", function(json) {
         // myActivitySpiral = new ActivitySpiral(json);
         jsonInput = json;
@@ -315,9 +321,9 @@ function setup() {
 
 function draw() {
     clear();
-    background(0);
+    background(hsluvToP5Rgb(background_hue, background_saturation, background_lightness));
     
-    drawSpiral(spiral_logarithmic, 0, draw_ellipse, false);
+    drawSpiral(spiral_logarithmic, spiral_hue, draw_ellipse, false);
 
     if (JSONloaded && !timelineConstructed) {
         myTimeline = new Timeline(jsonInput);
@@ -326,7 +332,7 @@ function draw() {
         let timeline_spiral = get_spiral_logarithmic(center, myTimeline.angles);
         flower_spiral = timeline_spiral
             .map(function(value, index, array) {
-                let settings = get_global_settings();
+                let settings = map_return_to_flower_settings(myTimeline.get_event(index), value.angle);
                 return new Flower(value.position, settings);
             });
         console.log("flower_spiral constructed of length:");
@@ -369,6 +375,7 @@ function Timeline(jsonInput) {
     let firstDate = new Date(self.events[0]['time_stamp']);
     let lastDate = new Date(self.events[self.events.length-1]['time_stamp']);
 
+    // turn timestamps into JS dates
     self.events = self.events
         .map(function(value, index, array) {
             value.date = new Date(value.time_stamp);
@@ -376,8 +383,9 @@ function Timeline(jsonInput) {
         });
 
     // TODO: change minDate to be 7 days from NOW, rather than lastDate
+    lastNdays = 1;
     self.minDate = new Date(lastDate);
-    self.minDate.setDate(lastDate.getDate() - 1);
+    self.minDate.setDate(lastDate.getDate() - lastNdays);
     // self.minDate = new Date(firstDate);
 
     self.angles = self.events
@@ -388,14 +396,17 @@ function Timeline(jsonInput) {
             }
         })
         .map(function(value, index, array) {
-            return map(value.date, self.minDate.getTime(), lastDate.getTime(), 0, 7 * Math.PI * 2);
+            return 6 * Math.PI * 2 + map(value.date, self.minDate.getTime(), lastDate.getTime(), 0, lastNdays * Math.PI * 2);
         });
+
+    self.get_event = function (index) {
+        return self.events[index];
+    }
 }
 
 function get_spiral_logarithmic(center, angles) {
     return angles
         .map(function(value, index, array) {
-            // let fadingBlue = [0, 0, map(value, minLoga, maxLoga, 0, 255)];
             let spiral_pos_logarithmic = get_spiral_pos_logarithmic(center, value);
             let spiral_radius_logarithmic = get_spiral_radius_logarithmic(center, value);
 
@@ -412,7 +423,7 @@ function drawSpiral(position_objects, hue, drawing_function, draw_points=true, d
         let alpha = map(value.angle, array[0].angle, array[array.length-1].angle, 0, 255);
         let lightness = map(value.angle, array[0].angle, array[array.length-1].angle, 0, 70);
         let point_color = hslaToP5RGBA([hue, 100, lightness, alpha]);
-        let line_color = hslaToP5RGBA([hue, 100, 70, alpha]);
+        let line_color = hslaToP5RGBA([hue, spiral_saturation, spiral_lightness, alpha]);
         
         if (draw_points) {
             fill(point_color);
@@ -520,6 +531,59 @@ function get_global_settings() {
         'carpel_noiseFactor': carpel_noiseFactor,
         'carpel_opacity': carpel_opacity,
         'carpel_curve_tightness': carpel_curve_tightness,
+    };
+}
+
+function map_return_to_flower_settings(returnedItem, angle) {
+    return {
+        'opacity': opacity,
+        'background_hue': background_hue,
+        'hue_exclude_range': hue_exclude_range,
+        'hue_noise_scale': hue_noise_scale,
+        'lightness_noise_scale': lightness_noise_scale,
+        'curve_tightness': curve_tightness,
+        'rotation': angle,
+        'progress': 0.5,
+
+        'sepals_amount': 2 + returnedItem['publisher_n_words'],
+        'sepals_radius': map(returnedItem['publisher_length'], 0, 30, sepals_radiusMin, sepals_radiusMax),
+        'sepals_size': map(returnedItem['publisher_avg_word_length'], 3, 12, sepals_sizeMin, sepals_sizeMax),
+        'sepals_noiseFactor': returnedItem['in_stock_since_years_ago'],
+        'sepals_curve_tightness': returnedItem['years_ago'],
+        'sepals_c_saturation': sepals_c_saturation,
+        'sepals_c_lightness': sepals_c_lightness,
+        'sepals_nPoints': sepals_nPoints,
+
+        'petals_amount': 2 + returnedItem['title_n_words'],
+        'petals_radius': map(returnedItem['title_length'], 2, 60, petals_radiusMin, petals_radiusMax),
+        'petals_size': map(returnedItem['title_avg_word_length'], 2, 15, petals_sizeMin, petals_sizeMax),
+        'petals_noiseFactor': returnedItem['in_stock_since_years_ago'],
+        'petals_curve_tightness': returnedItem['years_ago'],
+        'petals_c_saturation': petals_c_saturation,
+        'petals_c_lightness': petals_c_lightness,
+        'petals_c2_saturation': petals_c2_saturation,
+        'petals_c2_lightness': petals_c2_lightness,
+        'petals_nPoints': petals_nPoints,
+
+        'stamens_amount': constrain(map(returnedItem['description_n_words'], 0, 250, stamens_amountMin, stamens_amountMax), stamens_amountMin, stamens_amountMax),
+        'stamens_radius': constrain(map(returnedItem['description_length'], 0, 1500, stamens_radiusMin, stamens_radiusMax), stamens_radiusMin, stamens_radiusMax),
+        'stamens_size': map(returnedItem['description_avg_word_length'], 4, 10, stamens_sizeMin, stamens_sizeMax),
+        'stamens_noiseFactor': returnedItem['in_stock_since_years_ago'],
+        'stamens_curve_tightness': returnedItem['years_ago'],
+        'stamens_c_hue': stamens_c_hue,
+        'stamens_c_saturation': stamens_c_saturation,
+        'stamens_c_lightness': stamens_c_lightness,
+        'stamens_nPoints': stamens_nPoints,
+
+        'carpel_amount': 2 + returnedItem['author_n_words'],
+        'carpel_radius': map(returnedItem['author_length'], 0, 28, carpel_sizeMin, carpel_sizeMax),
+        'carpel_size': map(returnedItem['author_length'], 0, 28, carpel_sizeMin, carpel_sizeMax),
+        'carpel_noiseFactor': returnedItem['in_stock_since_years_ago'],
+        'carpel_curve_tightness': returnedItem['years_ago'],
+        'carpel_c_saturation': carpel_c_saturation,
+        'carpel_c_lightness': carpel_c_lightness,
+        'carpel_nPoints': carpel_nPoints,
+        'carpel_opacity': carpel_opacity,
     };
 }
 
