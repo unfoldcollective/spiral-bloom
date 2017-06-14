@@ -476,7 +476,6 @@ function get_global_settings() {
         'sepals_c_lightness': sepals_c_lightness,
         'sepals_nPoints': sepals_nPoints,
         'sepals_noiseFactor': sepals_noiseFactor,
-        'sepals_curve_tightness': sepals_curve_tightness,
 
         'petals_amount': petals_amount,
         'petals_radius': petals_radius,
@@ -485,7 +484,6 @@ function get_global_settings() {
         'petals_c_lightness': petals_c_lightness,
         'petals_nPoints': petals_nPoints,
         'petals_noiseFactor': petals_noiseFactor,
-        'petals_curve_tightness': petals_curve_tightness,
 
         'stamens_amount': stamens_amount,
         'stamens_radius': stamens_radius,
@@ -495,7 +493,6 @@ function get_global_settings() {
         'stamens_c_lightness': stamens_c_lightness,
         'stamens_nPoints': stamens_nPoints,
         'stamens_noiseFactor': stamens_noiseFactor,
-        'stamens_curve_tightness': stamens_curve_tightness,
 
         'carpel_amount': carpel_amount,
         'carpel_radius': carpel_radius,
@@ -505,7 +502,6 @@ function get_global_settings() {
         'carpel_nPoints': carpel_nPoints,
         'carpel_noiseFactor': carpel_noiseFactor,
         'carpel_opacity': carpel_opacity,
-        'carpel_curve_tightness': carpel_curve_tightness,
     };
 }
 
@@ -516,7 +512,7 @@ function map_return_to_flower_settings(returnedItem, angle) {
         'hue_exclude_range': hue_exclude_range,
         'hue_noise_scale': hue_noise_scale,
         'lightness_noise_scale': lightness_noise_scale,
-        'curve_tightness': curve_tightness,
+        'curve_tightness': returnedItem['years_ago'],
         'noiseFactor': noiseFactor,
         'rotation': angle,
         'progress': 0.1,
@@ -526,7 +522,6 @@ function map_return_to_flower_settings(returnedItem, angle) {
         'sepals_radius': map(returnedItem['publisher_length'], 0, 30, sepals_radiusMin, sepals_radiusMax) || sepals_radiusMin,
         'sepals_size': map(returnedItem['publisher_avg_word_length'], 3, 12, sepals_sizeMin, sepals_sizeMax) || sepals_sizeMin,
         'sepals_noiseFactor': returnedItem['in_stock_since_years_ago'],
-        'sepals_curve_tightness': returnedItem['years_ago'],
         'sepals_c_saturation': sepals_c_saturation,
         'sepals_c_lightness': sepals_c_lightness,
         'sepals_nPoints': sepals_nPoints,
@@ -535,7 +530,6 @@ function map_return_to_flower_settings(returnedItem, angle) {
         'petals_radius': map(returnedItem['title_length'], 2, 60, petals_radiusMin, petals_radiusMax) || petals_radiusMin,
         'petals_size': map(returnedItem['title_avg_word_length'], 2, 15, petals_sizeMin, petals_sizeMax) || petals_sizeMin,
         'petals_noiseFactor': returnedItem['in_stock_since_years_ago'],
-        'petals_curve_tightness': returnedItem['years_ago'],
         'petals_c_saturation': petals_c_saturation,
         'petals_c_lightness': petals_c_lightness,
         'petals_nPoints': petals_nPoints,
@@ -544,7 +538,6 @@ function map_return_to_flower_settings(returnedItem, angle) {
         'stamens_radius': constrain(map(returnedItem['description_length'], 0, 1500, stamens_radiusMin, stamens_radiusMax), stamens_radiusMin, stamens_radiusMax) || stamens_radiusMin,
         'stamens_size': map(returnedItem['description_avg_word_length'], 4, 10, stamens_sizeMin, stamens_sizeMax) || stamens_sizeMin,
         'stamens_noiseFactor': returnedItem['in_stock_since_years_ago'],
-        'stamens_curve_tightness': returnedItem['years_ago'],
         'stamens_c_hue': stamens_c_hue,
         'stamens_c_saturation': stamens_c_saturation,
         'stamens_c_lightness': stamens_c_lightness,
@@ -554,7 +547,6 @@ function map_return_to_flower_settings(returnedItem, angle) {
         'carpel_radius': map(returnedItem['author_length'], 0, 28, carpel_sizeMin, carpel_sizeMax) || carpel_sizeMin,
         'carpel_size': map(returnedItem['author_length'], 0, 28, carpel_sizeMin, carpel_sizeMax) || carpel_sizeMin,
         'carpel_noiseFactor': returnedItem['in_stock_since_years_ago'],
-        'carpel_curve_tightness': returnedItem['years_ago'],
         'carpel_c_saturation': carpel_c_saturation,
         'carpel_c_lightness': carpel_c_lightness,
         'carpel_nPoints': carpel_nPoints,
