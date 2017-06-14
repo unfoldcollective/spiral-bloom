@@ -21,7 +21,7 @@ function Flower(position, settings) {
     self.calc_sepals_noises = function () {
         self.sepals.noises = 
             self.sepals.indexes
-            .map(function(index) {
+            .map(function() {
                 let noiseStart = 10;
                 return noisify_pos(createVector(noiseStart,noiseStart), self.settings.sepals_size, self.settings.noiseFactor).add(-noiseStart, -noiseStart);
             });
@@ -30,7 +30,7 @@ function Flower(position, settings) {
     self.calc_sepals_colors = function () {
         self.sepals.colors = 
             self.sepals.indexes
-            .map(function(index) {
+            .map(function() {
                 return [self.sepals.color[0], self.sepals.color[1], noisify(self.sepals.color[2], self.settings.lightness_noise_scale, 1), self.sepals.color[3] ];
             });
     };
@@ -78,7 +78,7 @@ function Flower(position, settings) {
     self.calc_petals_noises = function () {
         self.petals.noises = 
             self.petals.indexes
-            .map(function(index) {
+            .map(function() {
                 let noiseStart = 10;
                 let leafPointNoises = 
                     _.range(self.settings.petals_nPoints)
@@ -92,7 +92,7 @@ function Flower(position, settings) {
     self.calc_petals_colors = function () {
         self.petals.colors = 
             self.petals.indexes
-            .map(function(index) {
+            .map(function() {
                 let layer1_color = [self.petals.color1[0], self.petals.color1[1], noisify(self.petals.color1[2], self.settings.lightness_noise_scale, 1), self.petals.color1[3] ];
                 let layer2_color = [self.petals.color2[0], self.petals.color2[1], noisify(self.petals.color2[2], self.settings.lightness_noise_scale, 1), self.petals.color2[3] ];
                 return {
@@ -155,7 +155,7 @@ function Flower(position, settings) {
     self.calc_carpel_colors = function () {
         self.carpel.colors =
             self.carpel.indexes
-            .map(function(value) {
+            .map(function() {
                 return [self.carpel.color[0], self.carpel.color[1], noisify(self.carpel.color[2], self.settings.lightness_noise_scale, self.settings.noiseFactor), self.carpel.color[3] ];
             });
     };
@@ -182,39 +182,59 @@ function Flower(position, settings) {
     //////////// 
 
     self.stamens = {};
+    self.stamens.indexes = _.shuffle(_.range(self.settings.stamens_amount));
     self.stamens.color = [
         complement_circular(self.petals.color1[0]),
         self.settings.stamens_c_saturation,
         self.settings.stamens_c_lightness,
         self.settings.opacity,
     ];
-    self.stamens.parts =
-        _.shuffle(_.range(self.settings.stamens_amount))
-        .map(function(value) {
-            return getPosOnCircle(self.position, self.settings.progress * self.settings.stamens_radius, self.settings.rotation, self.settings.stamens_amount, value);
-        })
-        .map(function(center) {
-            let center_pos_noisified = noisify_pos(center, self.settings.progress * self.settings.stamens_radius, self.settings.noiseFactor);
-            let center_pos_closer = p5.Vector.lerp(center_pos_noisified, self.position, self.settings.stamens_size/self.settings.stamens_radius);
-            // let center_pos_closer = center;
-            let leaf_positions = get_leaf_positions(center_pos_noisified, self.settings.progress * self.settings.stamens_size, self.settings.stamens_nPoints, self.settings.noiseFactor);
-            let base_index = index_closest_to(leaf_positions, self.position);
-            
-            let d = dist(self.position.x, self.position.y, center_pos_closer.x, center_pos_closer.y);
-            let stem_positions = [
-                noisify_pos(self.position, d, self.settings.noiseFactor).x, noisify_pos(self.position, d, self.settings.noiseFactor).y, 
-                self.position.x, self.position.y, 
-                center_pos_closer.x, center_pos_closer.y, 
-                noisify_pos(center_pos_closer, d, self.settings.noiseFactor).x, noisify_pos(center_pos_closer, d, self.settings.noiseFactor).y
-            ];
-            let color = [self.stamens.color[0], self.stamens.color[1], noisify(self.stamens.color[2], self.settings.lightness_noise_scale, self.settings.noiseFactor*0.5), self.stamens.color[3] ];
-            return {
-                leaf_positions: leaf_positions,
-                stem_positions: stem_positions,
-                color:          color,
-                base_index:     base_index,
-            }
-        });
+    
+    self.calc_stamens_noises = function () {
+        self.stamens.noises = 
+            self.stamens.indexes
+            .map(function() {
+                let noiseStart = 10;
+                return noisify_pos(createVector(noiseStart,noiseStart), self.settings.stamens_radius, self.settings.noiseFactor).add(-noiseStart, -noiseStart);
+            });
+    };
+
+    self.calc_stamens_colors = function () {
+        self.stamens.colors =
+            self.stamens.indexes
+            .map(function() {
+                return [self.stamens.color[0], self.stamens.color[1], noisify(self.stamens.color[2], self.settings.lightness_noise_scale, self.settings.noiseFactor*0.5), self.stamens.color[3] ];
+            });
+    };
+
+    self.calc_stamens_parts = function () {
+        let stamens_progress = gompertz(self.settings.progress);
+        self.stamens.parts =
+            self.stamens.indexes
+            .map(function(index) {
+                return getPosOnCircle(self.position, stamens_progress * self.settings.stamens_radius, self.settings.rotation, self.settings.stamens_amount, index);
+            })
+            .map(function(center, centerIndex) {
+                let d = dist(self.position.x, self.position.y, center.x, center.y);
+                let flower_pos_noisified = self.position; //p5.Vector.add(self.position, self.stamens.noises[centerIndex]);
+                let center_noisified = center; //p5.Vector.add(center, self.stamens.noises[centerIndex]);
+                let stem_positions = [
+                    flower_pos_noisified.x, flower_pos_noisified.y, 
+                    self.position.x, self.position.y, 
+                    center.x, center.y, 
+                    center_noisified.x, center_noisified.y
+                ];
+                return {
+                    stem_positions: stem_positions,
+                    radius: stamens_progress * self.settings.stamens_size,
+                }
+            });
+    };
+
+    self.calc_stamens_noises();
+    self.calc_stamens_colors();
+    self.calc_stamens_parts();
+
 
     // Draw Flower
     this.draw = function () {   
@@ -253,10 +273,12 @@ function Flower(position, settings) {
             draw_leaf_ellipse(part.center.x, part.center.y, part.radius * 2 , part.radius * 2, self.carpel.colors[partIndex]);
         });
         
-        self.stamens.parts.map(function(part) {
-            
-            draw_stem_from_pos(part.stem_positions, part.color);
-            draw_leaf_ellipse(part.stem_positions[4], part.stem_positions[5], self.settings.progress * self.settings.stamens_size, self.settings.progress * self.settings.stamens_size, part.color);
+        self.stamens.parts.map(function(part, partIndex) {
+            part.stem_positions[4] += self.stamens.noises[partIndex].x
+            part.stem_positions[5] += self.stamens.noises[partIndex].y
+
+            draw_stem_from_pos(part.stem_positions, self.stamens.colors[partIndex]);
+            draw_leaf_ellipse(part.stem_positions[4], part.stem_positions[5], part.radius, part.radius, self.stamens.colors[partIndex]);
         });
 
     }

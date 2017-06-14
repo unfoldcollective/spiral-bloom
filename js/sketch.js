@@ -334,6 +334,7 @@ function draw() {
                 flower.calc_sepals_leaves();
                 flower.calc_petals_leaves();
                 flower.calc_carpel_parts();
+                flower.calc_stamens_parts();
                 flower.draw(); 
             });
         }
