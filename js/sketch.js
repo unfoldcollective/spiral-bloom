@@ -352,8 +352,9 @@ function draw() {
             }
         } else {
             flower_spiral.map(function(flower) {
-                // let globalSettings = get_global_settings();
                 // flower.update_settings(globalSettings);
+                flower.update_progress();
+                flower.calc_petals();
                 flower.draw(); 
             });
         }
@@ -537,7 +538,7 @@ function map_return_to_flower_settings(returnedItem, angle) {
         'lightness_noise_scale': lightness_noise_scale,
         'curve_tightness': curve_tightness,
         'rotation': angle,
-        'progress': 0.5,
+        'progress': 0.1,
 
         'sepals_amount': 2 + returnedItem['publisher_n_words'] || sepals_amountMin,
         'sepals_radius': map(returnedItem['publisher_length'], 0, 30, sepals_radiusMin, sepals_radiusMax) || sepals_radiusMin,
