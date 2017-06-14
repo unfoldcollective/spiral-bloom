@@ -18,6 +18,7 @@ var background_lightnessMax = 100;
 var hue_exclude_range = 45;
 var hue_noise_scale = 100;
 var lightness_noise_scale = 50;
+var noiseFactor = 1;
 var curve_tightness = 1;
 var curve_tightnessMin = -10;
 var curve_tightnessMax = 10;
@@ -62,10 +63,6 @@ var sepals_noiseFactor = 1;
 var sepals_noiseFactorMin = 0;
 var sepals_noiseFactorMax = 10;
 var sepals_noiseFactorStep = 0.1;
-var sepals_curve_tightness = 0;
-var sepals_curve_tightnessMin = -10;
-var sepals_curve_tightnessMax = 10;
-var sepals_curve_tightnessStep = 0.1;
 
 var petals_amount = 6;
 var petals_amountMin = 3;
@@ -89,10 +86,6 @@ var petals_noiseFactor = 2;
 var petals_noiseFactorMin = 0;
 var petals_noiseFactorMax = 4;
 var petals_noiseFactorStep = 0.1;
-var petals_curve_tightness = 4;
-var petals_curve_tightnessMin = -20;
-var petals_curve_tightnessMax = 10;
-var petals_curve_tightnessStep = 0.1;
 
 var stamens_amount = 20;
 var stamens_amountMin = 3;
@@ -119,10 +112,6 @@ var stamens_noiseFactor = 1;
 var stamens_noiseFactorMin = 0;
 var stamens_noiseFactorMax = 10;
 var stamens_noiseFactorStep = 0.1;
-var stamens_curve_tightness = 0;
-var stamens_curve_tightnessMin = -10;
-var stamens_curve_tightnessMax = 10;
-var stamens_curve_tightnessStep = 0.1;
 
 var carpel_amount = 3;
 var carpel_amountMin = 3;
@@ -147,10 +136,6 @@ var carpel_noiseFactorMin = 0;
 var carpel_noiseFactorMax = 1;
 var carpel_noiseFactorStep = 0.1;
 var carpel_opacity = 240;
-var carpel_curve_tightness = 0;
-var carpel_curve_tightnessMin = -10;
-var carpel_curve_tightnessMax = 10;
-var carpel_curve_tightnessStep = 0.1;
 
 var guiGlobal;
 var guiSepals;
@@ -249,32 +234,24 @@ function setup() {
         'sepals_radius',
         'sepals_size',
         'sepals_nPoints',
-        'sepals_noiseFactor',
-        'sepals_curve_tightness',
     );
     guiPetals.addGlobals(
         'petals_amount',
         'petals_radius',
         'petals_size',
         'petals_nPoints',
-        'petals_noiseFactor',
-        'petals_curve_tightness',
     );
     guiStamens.addGlobals(
         'stamens_amount',
         'stamens_radius',
         'stamens_size',
         'stamens_nPoints',
-        'stamens_noiseFactor',
-        'stamens_curve_tightness',
     );
     guiCarpel.addGlobals(
         'carpel_amount',
         // 'carpel_radius',
         'carpel_size',
         'carpel_nPoints',
-        // 'carpel_noiseFactor',
-        'carpel_curve_tightness',
     );
     
     set_gui_styles('Logarithmic', {"top":"400px"});
@@ -487,6 +464,7 @@ function get_global_settings() {
         'hue_noise_scale': hue_noise_scale,
         'lightness_noise_scale': lightness_noise_scale,
         'curve_tightness': curve_tightness,
+        'noiseFactor': noiseFactor,
         'rotation': rotation,
         'progress': progress,
         'progress_delta': progress_delta,
@@ -539,6 +517,7 @@ function map_return_to_flower_settings(returnedItem, angle) {
         'hue_noise_scale': hue_noise_scale,
         'lightness_noise_scale': lightness_noise_scale,
         'curve_tightness': curve_tightness,
+        'noiseFactor': noiseFactor,
         'rotation': angle,
         'progress': 0.1,
         'progress_delta': progress_delta,

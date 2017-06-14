@@ -23,7 +23,7 @@ function Flower(position, settings) {
             self.sepals.indexes
             .map(function(index) {
                 let noiseStart = 10;
-                return noisify_pos(createVector(noiseStart,noiseStart), self.settings.sepals_size, self.settings.sepals_noiseFactor).add(-noiseStart, -noiseStart);
+                return noisify_pos(createVector(noiseStart,noiseStart), self.settings.sepals_size, self.settings.noiseFactor).add(-noiseStart, -noiseStart);
             });
     };
 
@@ -72,7 +72,7 @@ function Flower(position, settings) {
         self.settings.opacity,
     ];
     self.petals.color2 = [
-        normalise_to_hue(noisify(self.petals.color1[0], self.settings.hue_noise_scale, petals_noiseFactor)),
+        normalise_to_hue(noisify(self.petals.color1[0], self.settings.hue_noise_scale, self.settings.noiseFactor)),
         self.settings.petals_c_saturation,
         complement_linear(self.petals.color1[2], 100),
         self.settings.opacity,
@@ -86,7 +86,7 @@ function Flower(position, settings) {
                 let leafPointNoises = 
                     _.range(self.settings.petals_nPoints)
                     .map(function(leafPoint) {
-                        return noisify_pos(createVector(noiseStart,noiseStart), self.settings.petals_size, self.settings.petals_noiseFactor).add(-noiseStart, -noiseStart);
+                        return noisify_pos(createVector(noiseStart,noiseStart), self.settings.petals_size, self.settings.noiseFactor).add(-noiseStart, -noiseStart);
                     });
                 return leafPointNoises;
             });
@@ -158,7 +158,7 @@ function Flower(position, settings) {
     self.carpel.centers =
         _.shuffle(_.range(self.settings.carpel_amount))
         .map(function(value) {
-            let color = [self.carpel.color[0], self.carpel.color[1], noisify(self.carpel.color[2], self.settings.lightness_noise_scale, self.settings.carpel_noiseFactor), self.carpel.color[3] ];
+            let color = [self.carpel.color[0], self.carpel.color[1], noisify(self.carpel.color[2], self.settings.lightness_noise_scale, self.settings.noiseFactor), self.carpel.color[3] ];
             let position = getPosOnCircle(self.position, self.settings.progress * self.settings.carpel_radius, self.settings.rotation, self.settings.carpel_amount, value);
             return {
                 color: color,
@@ -183,20 +183,20 @@ function Flower(position, settings) {
             return getPosOnCircle(self.position, self.settings.progress * self.settings.stamens_radius, self.settings.rotation, self.settings.stamens_amount, value);
         })
         .map(function(center) {
-            let center_pos_noisified = noisify_pos(center, self.settings.progress * self.settings.stamens_radius, self.settings.stamens_noiseFactor);
+            let center_pos_noisified = noisify_pos(center, self.settings.progress * self.settings.stamens_radius, self.settings.noiseFactor);
             let center_pos_closer = p5.Vector.lerp(center_pos_noisified, self.position, self.settings.stamens_size/self.settings.stamens_radius);
             // let center_pos_closer = center;
-            let leaf_positions = get_leaf_positions(center_pos_noisified, self.settings.progress * self.settings.stamens_size, self.settings.stamens_nPoints, self.settings.stamens_noiseFactor);
+            let leaf_positions = get_leaf_positions(center_pos_noisified, self.settings.progress * self.settings.stamens_size, self.settings.stamens_nPoints, self.settings.noiseFactor);
             let base_index = index_closest_to(leaf_positions, self.position);
             
             let d = dist(self.position.x, self.position.y, center_pos_closer.x, center_pos_closer.y);
             let stem_positions = [
-                noisify_pos(self.position, d, self.settings.stamens_noiseFactor).x, noisify_pos(self.position, d, self.settings.stamens_noiseFactor).y, 
+                noisify_pos(self.position, d, self.settings.noiseFactor).x, noisify_pos(self.position, d, self.settings.noiseFactor).y, 
                 self.position.x, self.position.y, 
                 center_pos_closer.x, center_pos_closer.y, 
-                noisify_pos(center_pos_closer, d, self.settings.stamens_noiseFactor).x, noisify_pos(center_pos_closer, d, self.settings.stamens_noiseFactor).y
+                noisify_pos(center_pos_closer, d, self.settings.noiseFactor).x, noisify_pos(center_pos_closer, d, self.settings.noiseFactor).y
             ];
-            let color = [self.stamens.color[0], self.stamens.color[1], noisify(self.stamens.color[2], self.settings.lightness_noise_scale, self.settings.stamens_noiseFactor*0.5), self.stamens.color[3] ];
+            let color = [self.stamens.color[0], self.stamens.color[1], noisify(self.stamens.color[2], self.settings.lightness_noise_scale, self.settings.noiseFactor*0.5), self.stamens.color[3] ];
             return {
                 leaf_positions: leaf_positions,
                 stem_positions: stem_positions,
@@ -206,9 +206,9 @@ function Flower(position, settings) {
         });
 
     // Draw Flower
-    this.draw = function () {        
+    this.draw = function () {   
+        curveTightness(self.settings.curve_tightness);     
         self.sepals.leaves.map(function(leaf, leafIndex) {
-            curveTightness(self.settings.sepals_curve_tightness);
             let positions_noisified = 
                 leaf.positions
                 .map(function(position, leafPointIndex) {
@@ -219,9 +219,7 @@ function Flower(position, settings) {
             draw_leaf_from_pos(positions_noisified, self.sepals.colors[leafIndex].color);
         });
 
-        // petals level 2
         self.petals.leaves.map(function(leaf, leafIndex) {
-            curveTightness(self.settings.petals_curve_tightness);
             let positions1_noisified = 
                 leaf.positions1
                 .map(function(position, leafPointIndex) {
@@ -241,12 +239,11 @@ function Flower(position, settings) {
         });
 
         self.carpel.centers.map(function(center) {
-            curveTightness(self.settings.carpel_curve_tightness);
             draw_leaf_ellipse(center.position.x, center.position.y, self.settings.progress * self.settings.carpel_size , self.settings.progress * self.settings.carpel_size, center.color);
         });
         
         self.stamens.parts.map(function(part) {
-            curveTightness(self.settings.stamens_curve_tightness);
+            
             draw_stem_from_pos(part.stem_positions, part.color);
             draw_leaf_ellipse(part.stem_positions[4], part.stem_positions[5], self.settings.progress * self.settings.stamens_size, self.settings.progress * self.settings.stamens_size, part.color);
         });
