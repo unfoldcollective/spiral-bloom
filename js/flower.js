@@ -4,10 +4,6 @@ function Flower(position, settings) {
     self.settings = settings;
     self.settings.carpel_radius = self.settings.carpel_size;
 
-    self.settings.progress_delta = 0.01;
-
-
-
     self.sepals = {};
     self.sepals.color = [
         self.settings.background_hue,
@@ -31,6 +27,7 @@ function Flower(position, settings) {
         })
     
     self.petals = {};
+    self.petals.indexes = _.shuffle(_.range(self.settings.petals_amount));
     self.petals.color1 = [
         random_hue_excluding(self.settings.background_hue, self.settings.hue_exclude_range),
         self.settings.petals_c_saturation,
@@ -44,10 +41,10 @@ function Flower(position, settings) {
         self.settings.opacity,
     ];
 
-    this.calc_petals_colors = function () {
+    self.calc_petals_colors = function () {
         self.petals.colors = 
-            _.range(self.settings.petals_amount)
-            .map(function(center) {
+            self.petals.indexes
+            .map(function(index) {
                 let layer1_color = [self.petals.color1[0], self.petals.color1[1], noisify(self.petals.color1[2], self.settings.lightness_noise_scale, 1), self.petals.color1[3] ];
                 let layer2_color = [self.petals.color2[0], self.petals.color2[1], noisify(self.petals.color2[2], self.settings.lightness_noise_scale, 1), self.petals.color2[3] ];
                 return {
@@ -57,16 +54,32 @@ function Flower(position, settings) {
             });
     }
 
-    this.calc_petals_positions = function() {
+    self.calc_petals_noises = function () {
+        self.petals.noises = 
+            self.petals.indexes
+            .map(function(index) {
+                let noiseStart = 10;
+                return noisify_pos(createVector(noiseStart,noiseStart), self.settings.petals_size, self.settings.petals_noiseFactor).add(-noiseStart, -noiseStart);
+            });
+    }
+
+    self.calc_petals_positions = function() {
         let petals_progress = gompertz(self.settings.progress);
         self.petals.positions = 
-            _.shuffle(_.range(self.settings.petals_amount))
+            self.petals.indexes
             .map(function(value) {
                 return getPosOnCircle(self.position, petals_progress * self.settings.petals_radius, self.settings.rotation, self.settings.petals_amount, value);
             })
             .map(function(center) {
-                let layer1_positions = get_leaf_positions(center, self.position, petals_progress * self.settings.petals_size, self.settings.petals_nPoints, self.settings.petals_noiseFactor);
-                let layer2_positions = get_leaf_positions(center, self.position, petals_progress * self.settings.petals_size * 0.66, self.settings.petals_nPoints, self.settings.petals_noiseFactor);
+                // let layer1_positions = get_leaf_positions(center, self.position, petals_progress * self.settings.petals_size, self.settings.petals_nPoints, self.settings.petals_noiseFactor);
+                // let layer2_positions = get_leaf_positions(center, self.position, petals_progress * self.settings.petals_size * 0.66, self.settings.petals_nPoints, self.settings.petals_noiseFactor);
+                let layer1_positions = get_leaf_positions(center, self.position, petals_progress * self.settings.petals_size, self.settings.petals_nPoints);
+                let layer2_positions = get_leaf_positions(center, self.position, petals_progress * self.settings.petals_size * 0.66, self.settings.petals_nPoints);
+                // // add precalculated noise
+                // layer1_positions.map(function(position, index, array) {
+                //     return position.add(self.petals.noises[index]);
+                // });
+
                 return {
                     positions1: layer1_positions,
                     positions2: layer2_positions,
@@ -84,8 +97,11 @@ function Flower(position, settings) {
             });
     }
     
+    self.calc_petals_noises();
     self.calc_petals_colors();
     self.calc_petals_positions();
+
+    console.log(self.petals.noises);
 
     self.carpel = {};
     self.carpel.color = [
@@ -244,6 +260,33 @@ function get_leaf_positions(center_pos, base_pos, size, nPoints, noiseFactor) {
     return positions;
 }
 
+function get_leaf_positions(center_pos, base_pos, size, nPoints, noiseFactor=0) {
+    var positions = 
+        _.range(nPoints)
+        .map(function(value, index) {
+            return getPosOnCircle(center_pos, size, rotation, nPoints, index);
+        })
+    if (noiseFactor > 0) {
+        positions = positions.map(function(value) {
+            return noisify_pos(value, size, noiseFactor);
+        });
+    }
+    
+    var closest_index_to_base_pos = positions.reduce(function(prevVal, elem, index, array) {
+        // prevDistance = dist(array[prevVal].x, array[prevVal].y, base_pos.x, base_pos.y);
+        // curDistance  = dist(elem.x, elem.y, base_pos.x, base_pos.y);
+        // distSquared() runs faster than dist()
+        prevDistance = distSquared(array[prevVal].x, array[prevVal].y, base_pos.x, base_pos.y);
+        curDistance  = distSquared(elem.x, elem.y, base_pos.x, base_pos.y);
+
+        return prevDistance < curDistance ? prevVal : index;
+    }, 0);
+    
+    positions[closest_index_to_base_pos] = base_pos;
+
+    return positions;
+}
+
 function noisify_pos(pos, scale, noiseFactor) {
     return createVector( noisify(pos.x, scale, noiseFactor), noisify(pos.y, scale, noiseFactor) );
 }
@@ -311,7 +354,7 @@ function getPosOnCircle(midPosition, radius, rotation, n, index) {
 }
 
 function noisify(x, scale, noiseFactor) {
-    seed += 0.01;
+    seed += seedDelta;
     return x + (noise(seed)-0.5) * noiseFactor * scale;
 }
 

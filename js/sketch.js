@@ -2,7 +2,7 @@ var useNoLoop = false;
 var useNoLoop = true;
 
 // gui params
-
+var progress_delta = 0.01;
 var opacity = 220;
 var opacityMin = 0;
 var opacityMax = 255;
@@ -23,7 +23,7 @@ var curve_tightnessMin = -10;
 var curve_tightnessMax = 10;
 var curve_tightnessStep = 0.1;
 var seed = 0.0;
-var seedDelta = 0.01; // Steps of 0.005-0.03 work best for most applications
+var seedDelta = 0.03; // Steps of 0.005-0.03 work best for most applications
 var seedDeltaMin = 0.001;
 var seedDeltaMax = 0.1;
 var seedDeltaStep = 0.001;
@@ -488,6 +488,7 @@ function get_global_settings() {
         'curve_tightness': curve_tightness,
         'rotation': rotation,
         'progress': progress,
+        'progress_delta': progress_delta,
 
         'sepals_amount': sepals_amount,
         'sepals_radius': sepals_radius,
@@ -539,6 +540,7 @@ function map_return_to_flower_settings(returnedItem, angle) {
         'curve_tightness': curve_tightness,
         'rotation': angle,
         'progress': 0.1,
+        'progress_delta': progress_delta,
 
         'sepals_amount': 2 + returnedItem['publisher_n_words'] || sepals_amountMin,
         'sepals_radius': map(returnedItem['publisher_length'], 0, 30, sepals_radiusMin, sepals_radiusMax) || sepals_radiusMin,
