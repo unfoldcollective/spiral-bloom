@@ -197,20 +197,20 @@ function setup() {
     // flower GUIs //
     /////////////////
     
-    guiGlobal  = createGui('Global');
-    guiSepals  = createGui('Sepals');
-    guiPetals  = createGui('Petals');
-    guiCarpel  = createGui('Carpel');
-    guiStamens = createGui('Stamens');
+    // guiGlobal  = createGui('Global');
+    // guiSepals  = createGui('Sepals');
+    // guiPetals  = createGui('Petals');
+    // guiCarpel  = createGui('Carpel');
+    // guiStamens = createGui('Stamens');
     guiLogarithmic  = createGui('Logarithmic');
 
     guis = [
         guiLogarithmic,
-        guiGlobal,
-        guiSepals,
-        guiPetals,
-        guiStamens,
-        guiCarpel,
+        // guiGlobal,
+        // guiSepals,
+        // guiPetals,
+        // guiStamens,
+        // guiCarpel,
     ]
     
     guiLogarithmic.addGlobals(
@@ -220,39 +220,39 @@ function setup() {
         'maxLoga',
     );
 
-    guiGlobal.addGlobals(
-        'opacity',
-        'rotation',
-        'progress',
-        'background_hue',
-        'background_saturation',
-        'background_lightness',
-        'curve_tightness',
-    );
-    guiSepals.addGlobals(
-        'sepals_amount',
-        'sepals_radius',
-        'sepals_size',
-        'sepals_nPoints',
-    );
-    guiPetals.addGlobals(
-        'petals_amount',
-        'petals_radius',
-        'petals_size',
-        'petals_nPoints',
-    );
-    guiStamens.addGlobals(
-        'stamens_amount',
-        'stamens_radius',
-        'stamens_size',
-        'stamens_nPoints',
-    );
-    guiCarpel.addGlobals(
-        'carpel_amount',
-        // 'carpel_radius',
-        'carpel_size',
-        'carpel_nPoints',
-    );
+    // guiGlobal.addGlobals(
+    //     'opacity',
+    //     'rotation',
+    //     'progress',
+    //     'background_hue',
+    //     'background_saturation',
+    //     'background_lightness',
+    //     'curve_tightness',
+    // );
+    // guiSepals.addGlobals(
+    //     'sepals_amount',
+    //     'sepals_radius',
+    //     'sepals_size',
+    //     'sepals_nPoints',
+    // );
+    // guiPetals.addGlobals(
+    //     'petals_amount',
+    //     'petals_radius',
+    //     'petals_size',
+    //     'petals_nPoints',
+    // );
+    // guiStamens.addGlobals(
+    //     'stamens_amount',
+    //     'stamens_radius',
+    //     'stamens_size',
+    //     'stamens_nPoints',
+    // );
+    // guiCarpel.addGlobals(
+    //     'carpel_amount',
+    //     // 'carpel_radius',
+    //     'carpel_size',
+    //     'carpel_nPoints',
+    // );
     
     set_gui_styles('Logarithmic', {"top":"400px"});
     set_gui_styles('Global',  {"left": (width - 200 - 20)  + "px", "top":"400px"});
