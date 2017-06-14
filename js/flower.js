@@ -31,12 +31,9 @@ function Flower(position, settings) {
         self.sepals.colors = 
             self.sepals.indexes
             .map(function(index) {
-                let color = [self.sepals.color[0], self.sepals.color[1], noisify(self.sepals.color[2], self.settings.lightness_noise_scale, 1), self.sepals.color[3] ];
-                return {
-                    color: color
-                };
+                return [self.sepals.color[0], self.sepals.color[1], noisify(self.sepals.color[2], self.settings.lightness_noise_scale, 1), self.sepals.color[3] ];
             });
-    }
+    };
 
     self.calc_sepals_leaves = function() {
         let sepals_progress = gompertz(self.settings.progress);
@@ -53,7 +50,7 @@ function Flower(position, settings) {
                     base_index: base_index
                 };
             });
-    }
+    };
 
     self.calc_sepals_noises();
     self.calc_sepals_colors();
@@ -90,7 +87,7 @@ function Flower(position, settings) {
                     });
                 return leafPointNoises;
             });
-    }
+    };
 
     self.calc_petals_colors = function () {
         self.petals.colors = 
@@ -103,7 +100,7 @@ function Flower(position, settings) {
                     color2: layer2_color,
                 };
             });
-    }
+    };
 
 
     self.calc_petals_leaves = function() {
@@ -136,35 +133,49 @@ function Flower(position, settings) {
                 part.positions2 = layer2_positions_interspersed;
                 return part;
             });
-    }
+    };
     
     self.calc_petals_noises();
     self.calc_petals_colors();
     self.calc_petals_leaves();
-
-    console.log(self.petals.noises);
 
     ////////////
     // CARPEL //
     //////////// 
 
     self.carpel = {};
+    self.carpel.indexes = _.shuffle(_.range(self.settings.carpel_amount));
     self.carpel.color = [
         complement_circular(self.petals.color1[0]),
         self.settings.carpel_c_saturation,
         self.settings.carpel_c_lightness,
         self.settings.carpel_opacity,
     ];
-    self.carpel.centers =
-        _.shuffle(_.range(self.settings.carpel_amount))
-        .map(function(value) {
-            let color = [self.carpel.color[0], self.carpel.color[1], noisify(self.carpel.color[2], self.settings.lightness_noise_scale, self.settings.noiseFactor), self.carpel.color[3] ];
-            let position = getPosOnCircle(self.position, self.settings.progress * self.settings.carpel_radius, self.settings.rotation, self.settings.carpel_amount, value);
-            return {
-                color: color,
-                position: position,
-            };
-        })
+
+    self.calc_carpel_colors = function () {
+        self.carpel.colors =
+            self.carpel.indexes
+            .map(function(value) {
+                return [self.carpel.color[0], self.carpel.color[1], noisify(self.carpel.color[2], self.settings.lightness_noise_scale, self.settings.noiseFactor), self.carpel.color[3] ];
+            });
+    };
+
+    self.calc_carpel_parts = function () {
+        let carpel_progress = gompertz(self.settings.progress);
+        self.carpel.parts =
+            self.carpel.indexes
+            .map(function(index) {
+                let center = getPosOnCircle(self.position, carpel_progress * self.settings.carpel_radius, self.settings.rotation, self.settings.carpel_amount, index);
+                return {
+                    center: center,
+                    radius: carpel_progress * self.settings.carpel_size,
+                }
+                
+            });
+    };
+
+    self.calc_carpel_colors();
+    self.calc_carpel_parts();
 
     ////////////
     // STAMEN //
@@ -216,7 +227,7 @@ function Flower(position, settings) {
                 });
             // attach base point to flower center
             positions_noisified[leaf.base_index] = self.position;
-            draw_leaf_from_pos(positions_noisified, self.sepals.colors[leafIndex].color);
+            draw_leaf_from_pos(positions_noisified, self.sepals.colors[leafIndex]);
         });
 
         self.petals.leaves.map(function(leaf, leafIndex) {
@@ -238,8 +249,8 @@ function Flower(position, settings) {
             draw_leaf_from_pos(positions2_noisified,  self.petals.colors[leafIndex].color2);
         });
 
-        self.carpel.centers.map(function(center) {
-            draw_leaf_ellipse(center.position.x, center.position.y, self.settings.progress * self.settings.carpel_size , self.settings.progress * self.settings.carpel_size, center.color);
+        self.carpel.parts.map(function(part, partIndex) {
+            draw_leaf_ellipse(part.center.x, part.center.y, part.radius * 2 , part.radius * 2, self.carpel.colors[partIndex]);
         });
         
         self.stamens.parts.map(function(part) {

@@ -333,6 +333,7 @@ function draw() {
                 flower.update_progress();
                 flower.calc_sepals_leaves();
                 flower.calc_petals_leaves();
+                flower.calc_carpel_parts();
                 flower.draw(); 
             });
         }
