@@ -6,40 +6,7 @@ function Flower(position, settings) {
 
     self.settings.progress_delta = 0.01;
 
-    this.calc_petals = function() {
-        let petals_progress = gompertz(self.settings.progress);
-        self.petals.parts2 = _.shuffle(_.range(self.settings.petals_amount))
-            .map(function(value) {
-                return getPosOnCircle(self.position, petals_progress * self.settings.petals_radius, self.settings.rotation, self.settings.petals_amount, value);
-            })
-            .map(function(value) {
-                let layer1_positions = get_leaf_positions(value, self.position, petals_progress * self.settings.petals_size, self.settings.petals_nPoints, self.settings.petals_noiseFactor);
-                let layer2_positions = get_leaf_positions(value, self.position, petals_progress * self.settings.petals_size * 0.66, self.settings.petals_nPoints, self.settings.petals_noiseFactor);
-                let layer1_color = [self.petals.color1[0], self.petals.color1[1], noisify(self.petals.color1[2], self.settings.lightness_noise_scale, 1), self.petals.color1[3] ];
-                let layer2_color = [self.petals.color2[0], self.petals.color2[1], noisify(self.petals.color2[2], self.settings.lightness_noise_scale, 1), self.petals.color2[3] ];
-                return {
-                    layer1: {
-                        positions: layer1_positions,
-                        color: layer1_color,
-                    },
-                    layer2: {
-                        positions: layer2_positions,
-                        color: layer2_color,
-                    },
-                    
-                }
-            })
-            .map(function(part) {
-                let interValue = self.position;
-                let layer2_positions_interspersed = _.flatMap(part.layer2.positions, (value, index) =>
-                     index % 2 == 0 // check for even items
-                     ? [value, interValue]
-                     : value
-                );
-                part.layer2.positions = layer2_positions_interspersed;
-                return part;
-            });
-    }
+
 
     self.sepals = {};
     self.sepals.color = [
@@ -77,8 +44,48 @@ function Flower(position, settings) {
         self.settings.opacity,
     ];
 
-    self.petals.parts2;
-    self.calc_petals();
+    this.calc_petals_colors = function () {
+        self.petals.colors = 
+            _.range(self.settings.petals_amount)
+            .map(function(center) {
+                let layer1_color = [self.petals.color1[0], self.petals.color1[1], noisify(self.petals.color1[2], self.settings.lightness_noise_scale, 1), self.petals.color1[3] ];
+                let layer2_color = [self.petals.color2[0], self.petals.color2[1], noisify(self.petals.color2[2], self.settings.lightness_noise_scale, 1), self.petals.color2[3] ];
+                return {
+                    color1: layer1_color,
+                    color2: layer2_color,
+                };
+            });
+    }
+
+    this.calc_petals_positions = function() {
+        let petals_progress = gompertz(self.settings.progress);
+        self.petals.positions = 
+            _.shuffle(_.range(self.settings.petals_amount))
+            .map(function(value) {
+                return getPosOnCircle(self.position, petals_progress * self.settings.petals_radius, self.settings.rotation, self.settings.petals_amount, value);
+            })
+            .map(function(center) {
+                let layer1_positions = get_leaf_positions(center, self.position, petals_progress * self.settings.petals_size, self.settings.petals_nPoints, self.settings.petals_noiseFactor);
+                let layer2_positions = get_leaf_positions(center, self.position, petals_progress * self.settings.petals_size * 0.66, self.settings.petals_nPoints, self.settings.petals_noiseFactor);
+                return {
+                    positions1: layer1_positions,
+                    positions2: layer2_positions,
+                };
+            })
+            .map(function(part) {
+                let interValue = self.position;
+                let layer2_positions_interspersed = _.flatMap(part.positions2, (value, index) =>
+                     index % 2 == 0 // check for even items
+                     ? [value, interValue]
+                     : value
+                );
+                part.positions2 = layer2_positions_interspersed;
+                return part;
+            });
+    }
+    
+    self.calc_petals_colors();
+    self.calc_petals_positions();
 
     self.carpel = {};
     self.carpel.color = [
@@ -139,10 +146,10 @@ function Flower(position, settings) {
         });
 
         // petals level 2
-        self.petals.parts2.map(function(part) {
+        self.petals.positions.map(function(position, index) {
             curveTightness(self.settings.petals_curve_tightness);
-            draw_leaf_from_pos(part.layer1.positions,  part.layer1.color);
-            draw_leaf_from_pos(part.layer2.positions,  part.layer2.color);
+            draw_leaf_from_pos(position.positions1,  self.petals.colors[index].color1);
+            draw_leaf_from_pos(position.positions2,  self.petals.colors[index].color2);
         });
 
         self.carpel.centers.map(function(center) {
