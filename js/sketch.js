@@ -354,7 +354,8 @@ function draw() {
             flower_spiral.map(function(flower) {
                 // flower.update_settings(globalSettings);
                 flower.update_progress();
-                flower.calc_petals_positions();
+                flower.calc_sepals_leaves();
+                flower.calc_petals_leaves();
                 flower.draw(); 
             });
         }
