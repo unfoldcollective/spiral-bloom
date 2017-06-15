@@ -15,7 +15,7 @@ function Flower(position, settings) {
         self.settings.background_hue,
         self.settings.sepals_c_saturation, 
         self.settings.sepals_c_lightness,
-        self.settings.opacity,
+        self.settings.opacity * self.settings.recency,
     ];
 
     self.calc_sepals_noises = function () {
@@ -36,7 +36,7 @@ function Flower(position, settings) {
     };
 
     self.calc_sepals_leaves = function() {
-        let sepals_progress = gompertz(self.settings.progress, a=1, b=4, c=5);
+        let sepals_progress = self.settings.recency * gompertz(self.settings.progress, a=1, b=4, c=5);
         self.sepals.leaves = 
             self.sepals.indexes
             .map(function(value) {
@@ -73,13 +73,13 @@ function Flower(position, settings) {
         random_hue_excluding(self.settings.background_hue, self.settings.hue_exclude_range),
         self.settings.petals_c_saturation,
         coin_flip(self.settings.petals_c_lightness, complement_linear(self.settings.petals_c_lightness, 100)),
-        self.settings.opacity,
+        self.settings.opacity * self.settings.recency,
     ];
     self.petals.color2 = [
         normalise_to_hue(noisify(self.petals.color1[0], self.settings.hue_noise_scale, self.settings.noiseFactor)),
         self.settings.petals_c_saturation,
         complement_linear(self.petals.color1[2], 100),
-        self.settings.opacity,
+        self.settings.opacity * self.settings.recency,
     ];
 
     self.calc_petals_noises = function () {
@@ -111,7 +111,7 @@ function Flower(position, settings) {
 
 
     self.calc_petals_leaves = function() {
-        let petals_progress = gompertz(self.settings.progress, a=1, b=5, c=5);
+        let petals_progress = self.settings.recency * gompertz(self.settings.progress, a=1, b=5, c=5);
         self.petals.leaves = 
             self.petals.indexes
             .map(function(value) {
@@ -168,7 +168,7 @@ function Flower(position, settings) {
         complement_circular(self.petals.color1[0]),
         self.settings.carpel_c_saturation,
         self.settings.carpel_c_lightness,
-        self.settings.carpel_opacity,
+        self.settings.carpel_opacity * self.settings.recency,
     ];
 
     self.calc_carpel_colors = function () {
@@ -180,7 +180,7 @@ function Flower(position, settings) {
     };
 
     self.calc_carpel_parts = function () {
-        let carpel_progress = gompertz(self.settings.progress, a=1, b=5, c=6);
+        let carpel_progress = self.settings.recency * gompertz(self.settings.progress, a=1, b=5, c=6);
         self.carpel.parts =
             self.carpel.indexes
             .map(function(index) {
@@ -206,7 +206,7 @@ function Flower(position, settings) {
         complement_circular(self.petals.color1[0]),
         self.settings.stamens_c_saturation,
         self.settings.stamens_c_lightness,
-        self.settings.opacity,
+        self.settings.opacity * self.settings.recency,
     ];
     
     self.calc_stamens_noises = function () {
@@ -227,7 +227,7 @@ function Flower(position, settings) {
     };
 
     self.calc_stamens_parts = function () {
-        let stamens_progress = gompertz(self.settings.progress, a=1, b=5, c=4);
+        let stamens_progress = self.settings.recency * gompertz(self.settings.progress, a=1, b=5, c=4);
         self.stamens.parts =
             self.stamens.indexes
             .map(function(index) {
@@ -238,7 +238,7 @@ function Flower(position, settings) {
                     self.position.x + self.stamens.noises[centerIndex].x, self.position.y + self.stamens.noises[centerIndex].y, 
                     self.position.x, self.position.y, 
                     center.x + stamens_progress * self.stamens.noises[centerIndex].x, center.y + stamens_progress * self.stamens.noises[centerIndex].y, 
-                    center.x + stamens_progress * 0.2 * self.settings.stamens_radius * self.stamens.noises[centerIndex].x, center.y + stamens_progress * 0.2 * self.settings.stamens_radius * self.stamens.noises[centerIndex].y, 
+                    center.x + stamens_progress * 0.1 * self.settings.stamens_radius * self.stamens.noises[centerIndex].x, center.y + stamens_progress * 0.1 * self.settings.stamens_radius * self.stamens.noises[centerIndex].y, 
                 ];
 
                 return {
@@ -309,7 +309,7 @@ function Flower(position, settings) {
                 positions[2], positions[3],
                 positions[4], positions[5]
             );
-    }
+        }
         noStroke();
     };
 

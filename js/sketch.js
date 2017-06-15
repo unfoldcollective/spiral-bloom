@@ -46,7 +46,7 @@ var sepals_amountMin = 3;
 var sepals_amountMax = 20;
 var sepals_radius = 250;
 var sepals_radiusMin = 10;
-var sepals_radiusMax = 500;
+var sepals_radiusMax = 350;
 var sepals_size = 40;
 var sepals_sizeMin = 10;
 var sepals_sizeMax = 200;
@@ -69,7 +69,7 @@ var petals_amountMin = 3;
 var petals_amountMax = 20;
 var petals_radius = 150;
 var petals_radiusMin = 0;
-var petals_radiusMax = 500;
+var petals_radiusMax = 400;
 var petals_size = 150;
 var petals_sizeMin = 30;
 var petals_sizeMax = 200;
@@ -92,7 +92,7 @@ var stamens_amountMin = 3;
 var stamens_amountMax = 40;
 var stamens_radius = 100;
 var stamens_radiusMin = 50;
-var stamens_radiusMax = 200;
+var stamens_radiusMax = 300;
 var stamens_size = 10;
 var stamens_sizeMin = 10;
 var stamens_sizeMax = 20;
@@ -152,24 +152,13 @@ var jsonInput;
 
 var center;
 
-var a1 = 1;
-var a1Min = 0;
-var a1Max = 100;
-var b1 = 3;
-var b1Min = 0;
-var b1Max = 10;
-var b1Step = 0.1;
-var colorArch = [255, 0, 0];
-var minArch = 0;
-var maxArch = 100;
-
-var a2 = 0.2;
+var a2 = 0.01;
 var a2Min = 0;
-var a2Max = 10;
-var a2Step = 0.1;
-var b2 = 0.17;
+var a2Max = 1;
+var a2Step = 0.01;
+var b2 = 0.245;
 var b2Min = 0;
-var b2Max = 0.2;
+var b2Max = 0.3;
 var b2Step = 0.001;
 var colorLoga = [0, 0, 255];
 var minLoga = 6 * Math.PI * 2;
@@ -178,7 +167,6 @@ var maxLogaStep = 0.01;
 
 var colorData = [0, 255, 0];
 
-var guiArchimedean;
 var guiLogarithmic;
 
 var spiral_logarithmic;
@@ -190,27 +178,19 @@ p5.disableFriendlyErrors = true;
 function setup() {
     createCanvas(windowWidth, windowHeight);
     background(hsluvToP5Rgb(background_hue, background_saturation, background_lightness));
-    // frameRate(30);
+    frameRate(10);
     smooth();
 
     /////////////////
-    // flower GUIs //
+    // GUIs //
     /////////////////
     
     // guiGlobal  = createGui('Global');
-    // guiSepals  = createGui('Sepals');
-    // guiPetals  = createGui('Petals');
-    // guiCarpel  = createGui('Carpel');
-    // guiStamens = createGui('Stamens');
     guiLogarithmic  = createGui('Logarithmic');
 
     guis = [
         guiLogarithmic,
         // guiGlobal,
-        // guiSepals,
-        // guiPetals,
-        // guiStamens,
-        // guiCarpel,
     ]
     
     guiLogarithmic.addGlobals(
@@ -229,36 +209,14 @@ function setup() {
     //     'background_lightness',
     //     'curve_tightness',
     // );
-    // guiSepals.addGlobals(
-    //     'sepals_amount',
-    //     'sepals_radius',
-    //     'sepals_size',
-    //     'sepals_nPoints',
-    // );
-    // guiPetals.addGlobals(
-    //     'petals_amount',
-    //     'petals_radius',
-    //     'petals_size',
-    //     'petals_nPoints',
-    // );
-    // guiStamens.addGlobals(
-    //     'stamens_amount',
-    //     'stamens_radius',
-    //     'stamens_size',
-    //     'stamens_nPoints',
-    // );
-    // guiCarpel.addGlobals(
-    //     'carpel_amount',
-    //     // 'carpel_radius',
-    //     'carpel_size',
-    //     'carpel_nPoints',
-    // );
     
     set_gui_styles('Logarithmic', {"top":"400px"});
     set_gui_styles('Global',  {"left": (width - 200 - 20)  + "px", "top":"400px"});
     set_gui_styles('Stamens', {"left": (width - 200 - 20)  + "px"});
     set_gui_styles('Carpel',  {"left": (width - 200 - 240) + "px"});
     set_gui_styles('Petals',  {"left":"240px"});
+
+    toggleGUIs();
     
     // base spiral
     center = createVector(width * 0.5, height * 0.5);
@@ -279,17 +237,23 @@ function setup() {
     // load timeline data
     // $.getJSON("../data/timeline-170503-232226.json", function(json) {
     // $.getJSON("../data/sample-9returns.json", function(json) {
-    $.getJSON("../data/timeline-sample-uniquetimestamps.json", function(json) {
+    // $.getJSON("../data/timeline-sample-uniquetimestamps.json", function(json) {
+    // $.getJSON("../data/timeline.json", function(json) {
     // $.getJSON("../data/sample.json", function(json) {
-        // myActivitySpiral = new ActivitySpiral(json);
-        jsonInput = json;
-        JSONloaded = true;
+    $.getJSON("../data/timeline-24h.json", function(json) {
+        onJsonLoaded(json);
     });
 
     // Don't loop automatically
     if (useNoLoop) {
         noLoop();
     }
+}
+
+function onJsonLoaded(json) {
+    jsonInput = json;
+    JSONloaded = true;
+    draw();
 }
 
 function draw() {
@@ -301,11 +265,17 @@ function draw() {
     if (JSONloaded && !timelineConstructed) {
         myTimeline = new Timeline(jsonInput);
         console.log("timeline constructed");
+        
         timelineConstructed =  true;
-        let timeline_spiral = get_spiral_logarithmic(center, myTimeline.angles);
+        let timeline_angles = 
+            myTimeline.angles
+            .map(function(angle) {
+                return angle + minLoga
+            });
+        let timeline_spiral = get_spiral_logarithmic(center, timeline_angles);
         flower_spiral = timeline_spiral
             .map(function(value, index, array) {
-                let settings = map_return_to_flower_settings(myTimeline.get_event(index), value.angle);
+                let settings = map_return_to_flower_settings(myTimeline.get_event(index), myTimeline.get_angle(index));
                 return new Flower(value.position, settings);
             });
         console.log("flower_spiral constructed of length:");
@@ -319,20 +289,10 @@ function draw() {
         console.timeEnd("first_drawing");
     } else if (timelineConstructed) {
         console.time("flower.draw");
-        if (useNoLoop) {
-            for (var i = 0; i < 10; i++) {
-                flower_spiral.map(function(flower) {
-                    // let globalSettings = get_global_settings();
-                    // flower.update_settings(globalSettings);
-                    flower.draw(); 
-                });
-            }
-        } else {
-            flower_spiral.map(function(flower) {
-                flower.update();
-                flower.draw(); 
-            });
-        }
+        flower_spiral.map(function(flower) {
+            flower.update();
+            flower.draw(); 
+        });
         console.timeEnd("flower.draw");
     }
 }
@@ -354,26 +314,29 @@ function Timeline(jsonInput) {
             return value
         });
 
-    // TODO: change minDate to be 7 days from NOW, rather than lastDate
     lastNdays = 1;
     self.minDate = new Date(lastDate);
     self.minDate.setDate(lastDate.getDate() - lastNdays);
-    // self.minDate = new Date(firstDate);
 
     self.angles = self.events
-        // last 7 days
+        // filter last N days
         .filter(function(value, index) {
             if (value.date >= self.minDate ) {
                 return value;
             }
         })
+        // map to angle between 0 and N * 2 PI
         .map(function(value, index, array) {
-            return 6 * Math.PI * 2 + map(value.date, self.minDate.getTime(), lastDate.getTime(), 0, lastNdays * Math.PI * 2);
+            return map(value.date, self.minDate.getTime(), lastDate.getTime(), 0, lastNdays * Math.PI * 2);
         });
 
+    self.get_angle = function (index) {
+        return self.angles[index];
+    }
     self.get_event = function (index) {
         return self.events[index];
     }
+
 }
 
 function get_spiral_logarithmic(center, angles) {
@@ -511,8 +474,9 @@ function map_return_to_flower_settings(returnedItem, angle) {
         'lightness_noise_scale': lightness_noise_scale,
         'curve_tightness': returnedItem['years_ago'],
         'noiseFactor': noiseFactor,
-        'rotation': angle,
-        'progress': 0,
+        'rotation': _.random(0,360),
+        'progress': 0.3,
+        'recency': angle / (2 * Math.PI),
         'progress_delta': progress_delta,
 
         'sepals_amount': 2 + returnedItem['publisher_n_words'] || sepals_amountMin,
@@ -549,6 +513,7 @@ function map_return_to_flower_settings(returnedItem, angle) {
         'carpel_nPoints': carpel_nPoints,
         'carpel_opacity': carpel_opacity,
     };
+    // console.log(angle)
     return mapped_settings;
 }
 
