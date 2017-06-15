@@ -227,15 +227,13 @@ function Flower(position, settings) {
                 return getPosOnCircle(self.position, stamens_progress * self.settings.stamens_radius, self.settings.rotation, self.settings.stamens_amount, index);
             })
             .map(function(center, centerIndex) {
-                let d = dist(self.position.x, self.position.y, center.x, center.y);
-                let flower_pos_noisified = self.position; //p5.Vector.add(self.position, self.stamens.noises[centerIndex]);
-                let center_noisified = center; //p5.Vector.add(center, self.stamens.noises[centerIndex]);
                 let stem_positions = [
-                    flower_pos_noisified.x, flower_pos_noisified.y, 
+                    self.position.x + self.stamens.noises[centerIndex].x, self.position.y + self.stamens.noises[centerIndex].y, 
                     self.position.x, self.position.y, 
-                    center.x, center.y, 
-                    center_noisified.x, center_noisified.y
+                    center.x + self.stamens.noises[centerIndex].x, center.y + self.stamens.noises[centerIndex].y, 
+                    center.x + stamens_progress * 0.2 * self.settings.stamens_radius * self.stamens.noises[centerIndex].x, center.y + stamens_progress * 0.2 * self.settings.stamens_radius * self.stamens.noises[centerIndex].y, 
                 ];
+
                 return {
                     stem_positions: stem_positions,
                     radius: stamens_progress * self.settings.stamens_size,
@@ -272,9 +270,6 @@ function Flower(position, settings) {
         });
         
         self.stamens.parts.map(function(part, partIndex) {
-            part.stem_positions[4] += self.stamens.noises[partIndex].x
-            part.stem_positions[5] += self.stamens.noises[partIndex].y
-
             draw_stem_from_pos(part.stem_positions, self.stamens.colors[partIndex]);
             draw_leaf_ellipse(part.stem_positions[4], part.stem_positions[5], part.radius, part.radius, self.stamens.colors[partIndex]);
         });
