@@ -161,7 +161,7 @@ var b2Min = 0;
 var b2Max = 0.3;
 var b2Step = 0.001;
 var colorLoga = [0, 0, 255];
-var minLoga = 6 * Math.PI * 2;
+var minLoga = 5 * Math.PI * 2;
 var maxLoga = 7 * Math.PI * 2;
 var maxLogaStep = 0.01;
 
@@ -235,12 +235,8 @@ function setup() {
     ellipseMode(CENTER);
 
     // load timeline data
-    // $.getJSON("../data/timeline-170503-232226.json", function(json) {
-    // $.getJSON("../data/sample-9returns.json", function(json) {
-    // $.getJSON("../data/timeline-sample-uniquetimestamps.json", function(json) {
-    // $.getJSON("../data/timeline.json", function(json) {
-    // $.getJSON("../data/sample.json", function(json) {
-    $.getJSON("../scraping/data/samples/timeline-24h.json", function(json) {
+    // $.getJSON("../scraping/data/samples/timeline-24h.json", function(json) {
+    $.getJSON("../scraping/data/timeline.json", function(json) {
         onJsonLoaded(json);
     });
 
@@ -256,6 +252,27 @@ function onJsonLoaded(json) {
     draw();
 }
 
+function init() {
+    myTimeline = new Timeline(jsonInput);
+    
+    timelineConstructed =  true;
+    let timeline_angles = 
+        myTimeline.events
+        .map(function(event) {
+            return event.angle + minLoga
+        });
+    let timeline_spiral = get_spiral_logarithmic(center, timeline_angles);
+    flower_spiral = timeline_spiral
+        .map(function(value, index, array) {
+            let settings = map_return_to_flower_settings(myTimeline.get_event(index), myTimeline.get_angle(index));
+            return new Flower(value.position, settings);
+        });
+    console.log("flower_spiral constructed of length:", flower_spiral.length);
+    flower_spiral.map(function(flower) {
+        flower.draw(); 
+    });
+}
+
 function draw() {
     clear();
     background(hsluvToP5Rgb(background_hue, background_saturation, background_lightness));
@@ -263,30 +280,7 @@ function draw() {
     drawSpiral(spiral_logarithmic, spiral_hue, draw_ellipse, false);
 
     if (JSONloaded && !timelineConstructed) {
-        myTimeline = new Timeline(jsonInput);
-        console.log("timeline constructed");
-        
-        timelineConstructed =  true;
-        let timeline_angles = 
-            myTimeline.angles
-            .map(function(angle) {
-                return angle + minLoga
-            });
-        let timeline_spiral = get_spiral_logarithmic(center, timeline_angles);
-        flower_spiral = timeline_spiral
-            .map(function(value, index, array) {
-                let settings = map_return_to_flower_settings(myTimeline.get_event(index), myTimeline.get_angle(index));
-                return new Flower(value.position, settings);
-            });
-        console.log("flower_spiral constructed of length:");
-        console.log(flower_spiral.length)
-        console.time("first_drawing");
-        flower_spiral.map(function(flower) {
-            // let globalSettings = get_global_settings();
-            // flower.update_settings(globalSettings);
-            flower.draw(); 
-        });
-        console.timeEnd("first_drawing");
+        init();
     } else if (timelineConstructed) {
         console.time("flower.draw");
         flower_spiral.map(function(flower) {
@@ -301,37 +295,35 @@ function Timeline(jsonInput) {
     self = this;
     
     // sort oldest before latest
-    jsonInput.reverse();
-    self.events = jsonInput;
+    // jsonInput.reverse();
+    self.inputs = jsonInput;
     
-    let firstDate = new Date(self.events[0]['time_stamp']);
-    let lastDate = new Date(self.events[self.events.length-1]['time_stamp']);
-
-    // turn timestamps into JS dates
-    self.events = self.events
-        .map(function(value, index, array) {
-            value.date = new Date(value.time_stamp);
-            return value
-        });
-
-    lastNdays = 1;
-    self.minDate = new Date(lastDate);
-    self.minDate.setDate(lastDate.getDate() - lastNdays);
-
-    self.angles = self.events
+    // let firstDate = new Date(self.inputs[0]['time_stamp']);
+    let lastNdays = 0.25;
+    let lastDate = new Date(self.inputs[0].time_stamp);
+    let minDate = new Date(lastDate);
+    minDate.setDate(lastDate.getDate() - lastNdays);
+    let logaDelta = maxLoga - minLoga;
+    
+    self.events = 
+        self.inputs
+        // turn timestamps into JS dates
+        .map(function(input, index, array) {
+            return _.set(input, 'date', new Date(input.time_stamp))
+        })
         // filter last N days
-        .filter(function(value, index) {
-            if (value.date >= self.minDate ) {
-                return value;
+        .filter(function(input, index) {
+            if (input.date >= minDate ) {
+                return input;
             }
         })
         // map to angle between 0 and N * 2 PI
-        .map(function(value, index, array) {
-            return map(value.date, self.minDate.getTime(), lastDate.getTime(), 0, lastNdays * Math.PI * 2);
+        .map(function(input, index, array) {
+            return _.set(input, 'angle', map(input.date.getTime(), minDate.getTime(), lastDate.getTime(), 0, logaDelta))
         });
 
     self.get_angle = function (index) {
-        return self.angles[index];
+        return self.events[index].angle;
     }
     self.get_event = function (index) {
         return self.events[index];
@@ -476,7 +468,7 @@ function map_return_to_flower_settings(returnedItem, angle) {
         'noiseFactor': noiseFactor,
         'rotation': _.random(0,360),
         'progress': 0.3,
-        'recency': angle / (2 * Math.PI),
+        'recency': angle / (maxLoga - minLoga),
         'progress_delta': progress_delta,
 
         'sepals_amount': 2 + returnedItem['publisher_n_words'] || sepals_amountMin,
