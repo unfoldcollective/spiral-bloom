@@ -257,12 +257,12 @@ function Flower(position, settings) {
     self.draw = function () {   
         curveTightness(self.settings.curve_tightness);     
         self.sepals.leaves.map(function(leaf, leafIndex) {
-            draw_leaf_from_pos(leaf.positions, self.sepals.colors[leafIndex]);
+            self.draw_leaf_from_pos(leaf.positions, self.sepals.colors[leafIndex]);
         });
 
         self.petals.leaves.map(function(leaf, leafIndex) {
-            draw_leaf_from_pos(leaf.positions1,  self.petals.colors[leafIndex].color1);
-            draw_leaf_from_pos(leaf.positions2,  self.petals.colors[leafIndex].color2);
+            self.draw_leaf_from_pos(leaf.positions1,  self.petals.colors[leafIndex].color1);
+            self.draw_leaf_from_pos(leaf.positions2,  self.petals.colors[leafIndex].color2);
         });
 
         self.carpel.parts.map(function(part, partIndex) {
@@ -270,21 +270,21 @@ function Flower(position, settings) {
         });
         
         self.stamens.parts.map(function(part, partIndex) {
-            draw_stem_from_pos(part.stem_positions, self.stamens.colors[partIndex]);
+            self.draw_stem_from_pos(part.stem_positions, self.stamens.colors[partIndex]);
             draw_leaf_ellipse(part.stem_positions[4], part.stem_positions[5], part.radius, part.radius, self.stamens.colors[partIndex]);
         });
 
-    }
+    };
 
     self.update_settings = function (new_settings) {
         self.settings = new_settings;
-    }
+    };
 
     self.update_progress = function () {
         if (self.settings.progress < 2) {
             self.settings.progress += self.settings.progress_delta;
         }
-    }
+    };
 
     self.update = function () {
         self.update_progress();
@@ -292,7 +292,40 @@ function Flower(position, settings) {
         self.calc_petals_leaves();
         self.calc_carpel_parts();
         self.calc_stamens_parts();
+    };
+
+    self.draw_stem_from_pos = function (positions, colorHSLA) {
+        stroke(hslaToP5RGBA(colorHSLA));
+        if (self.settings.curve_tightness != 1) {
+            curve(
+                positions[0], positions[1],
+                positions[2], positions[3],
+                positions[4], positions[5],
+                positions[6], positions[7],
+            );
+        } 
+        else {
+            line(
+                positions[2], positions[3],
+                positions[4], positions[5]
+            );
     }
+        noStroke();
+    };
+
+    self.draw_leaf_from_pos = function (positions, colorHSLA) {
+        fill(hslaToP5RGBA(colorHSLA));
+        stroke(hslaToP5RGBA([colorHSLA[0], colorHSLA[1], colorHSLA[2] * 0.3, colorHSLA[3] * 0.3 ]));
+        if (self.settings.curve_tightness != 1) {
+            drawSplineLoop(positions);
+        }
+        else {
+            drawLineLoop(positions);
+        }
+        noStroke();
+        noFill();    
+    }
+
 }
 
 // drawing functions
@@ -308,12 +341,12 @@ function drawSplineLoop(points) {
     endShape();
 }
 
-function draw_leaf_from_pos(positions, colorHSLA) {
-    fill(hslaToP5RGBA(colorHSLA));
-    stroke(hslaToP5RGBA([colorHSLA[0], colorHSLA[1], colorHSLA[2] * 0.3, colorHSLA[3] * 0.3 ]));
-    drawSplineLoop(positions);
-    noStroke();
-    noFill();    
+function drawLineLoop(points) {
+    beginShape();
+        for (var i = 0; i < points.length; i++) {
+            curveVertex(points[i].x, points[i].y);
+        }
+    endShape(CLOSE);
 }
 
 function draw_leaf_ellipse(center_x, center_y, width, height, colorHSLA) {
@@ -322,17 +355,6 @@ function draw_leaf_ellipse(center_x, center_y, width, height, colorHSLA) {
     ellipse(center_x, center_y, width, height);
     noStroke();
     noFill();
-}
-
-function draw_stem_from_pos(positions, colorHSLA) {
-    stroke(hslaToP5RGBA(colorHSLA));
-    curve(
-        positions[0], positions[1],
-        positions[2], positions[3],
-        positions[4], positions[5],
-        positions[6], positions[7],
-    );
-    noStroke();
 }
 
 // structural functions
