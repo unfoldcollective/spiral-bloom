@@ -378,7 +378,7 @@ function drawSpiral(position_objects, hue, drawing_function, draw_points=true, d
         if (index > 0) {
             position_prev = array[index-1].position;
         } else {
-            position_prev = center;
+            position_prev = spiral_point.position;
         }
 
         if (draw_lines) {
