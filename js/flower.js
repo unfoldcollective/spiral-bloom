@@ -36,7 +36,7 @@ function Flower(position, settings) {
     };
 
     self.calc_sepals_leaves = function() {
-        let sepals_progress = gompertz(self.settings.progress, a=1, b=3, c=5);
+        let sepals_progress = gompertz(self.settings.progress, a=1, b=4, c=5);
         self.sepals.leaves = 
             self.sepals.indexes
             .map(function(value) {

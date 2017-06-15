@@ -2,14 +2,14 @@ var useNoLoop = false;
 var useNoLoop = true;
 
 // gui params
-var progress_delta = 0.01;
+var progress_delta = 0.002;
 var opacity = 220;
 var opacityMin = 0;
 var opacityMax = 255;
 var background_hue = 89;
 var background_hueMin = 0;
 var background_hueMax = 360;
-var background_saturation = 80;
+var background_saturation = 50;
 var background_saturationMin = 0;
 var background_saturationMax = 100;
 var background_lightness = 90;
