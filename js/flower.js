@@ -110,17 +110,29 @@ function Flower(position, settings) {
             .map(function(value) {
                 return getPosOnCircle(self.position, petals_progress * self.settings.petals_radius, self.settings.rotation, self.settings.petals_amount, value);
             })
-            .map(function(center) {
+            .map(function(center, leafIndex) {
                 let layer1_positions = get_leaf_positions(center, petals_progress * self.settings.petals_size, self.settings.petals_nPoints);
                 let layer2_positions = get_leaf_positions(center, petals_progress * self.settings.petals_size * 0.66, self.settings.petals_nPoints);
-                let base_index1 = index_closest_to(layer1_positions, self.position);
-                let base_index2 = index_closest_to(layer2_positions, self.position);
+                
+                // add precalculated noise
+                let layer1_positions_noisified = 
+                    layer1_positions
+                    .map(function(position, leafPointIndex) {
+                        return p5.Vector.add(position, self.petals.noises[leafIndex][leafPointIndex]);
+                    });
+                let layer2_positions_noisified = 
+                    layer2_positions
+                    .map(function(position, leafPointIndex) {
+                        return p5.Vector.add(position, self.petals.noises[leafIndex][leafPointIndex]);
+                    });
+
+                // attach base point to flower center
+                layer1_positions_noisified[index_closest_to(layer1_positions_noisified, self.position)] = self.position;
+                layer2_positions_noisified[index_closest_to(layer1_positions_noisified, self.position)] = self.position;                
 
                 return {
-                    positions1: layer1_positions,
-                    positions2: layer2_positions,
-                    base_index1: base_index1,
-                    base_index2: base_index2,
+                    positions1: layer1_positions_noisified,
+                    positions2: layer2_positions_noisified,
                 };
             })
             .map(function(part) {
@@ -251,22 +263,8 @@ function Flower(position, settings) {
         });
 
         self.petals.leaves.map(function(leaf, leafIndex) {
-            let positions1_noisified = 
-                leaf.positions1
-                .map(function(position, leafPointIndex) {
-                    return p5.Vector.add(position, self.petals.noises[leafIndex][leafPointIndex]);
-                });
-            let positions2_noisified = 
-                leaf.positions2
-                .map(function(position, leafPointIndex) {
-                    return p5.Vector.add(position, self.petals.noises[leafIndex][leafPointIndex]);
-                });
-            // attach base point to flower center
-            positions1_noisified[leaf.base_index1] = self.position;
-            positions2_noisified[leaf.base_index2] = self.position;
-
-            draw_leaf_from_pos(positions1_noisified,  self.petals.colors[leafIndex].color1);
-            draw_leaf_from_pos(positions2_noisified,  self.petals.colors[leafIndex].color2);
+            draw_leaf_from_pos(leaf.positions1,  self.petals.colors[leafIndex].color1);
+            draw_leaf_from_pos(leaf.positions2,  self.petals.colors[leafIndex].color2);
         });
 
         self.carpel.parts.map(function(part, partIndex) {
