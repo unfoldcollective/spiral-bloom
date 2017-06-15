@@ -254,7 +254,7 @@ function Flower(position, settings) {
 
 
     // Draw Flower
-    this.draw = function () {   
+    self.draw = function () {   
         curveTightness(self.settings.curve_tightness);     
         self.sepals.leaves.map(function(leaf, leafIndex) {
             draw_leaf_from_pos(leaf.positions, self.sepals.colors[leafIndex]);
@@ -276,14 +276,22 @@ function Flower(position, settings) {
 
     }
 
-    this.update_settings = function (new_settings) {
-        this.settings = new_settings;
+    self.update_settings = function (new_settings) {
+        self.settings = new_settings;
     }
 
-    this.update_progress = function () {
-        if (this.settings.progress < 2) {
-            this.settings.progress += self.settings.progress_delta;
+    self.update_progress = function () {
+        if (self.settings.progress < 2) {
+            self.settings.progress += self.settings.progress_delta;
         }
+    }
+
+    self.update = function () {
+        self.update_progress();
+        self.calc_sepals_leaves();
+        self.calc_petals_leaves();
+        self.calc_carpel_parts();
+        self.calc_stamens_parts();
     }
 }
 
