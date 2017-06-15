@@ -3,20 +3,14 @@ var useTiming = false;
 // var useNoLoop = true;
 // var useTiming = true;
 
+var timelinePath = "../scraping/data/timeline.json";
 var a2 = 0.01;
-var a2Min = 0;
-var a2Max = 1;
-var a2Step = 0.01;
 var b2 = 0.245;
-var b2Min = 0;
-var b2Max = 0.3;
-var b2Step = 0.001;
-var colorLoga = [0, 0, 255];
 var minLoga = 4 * Math.PI * 2;
 var maxLoga = 7 * Math.PI * 2;
-var maxLogaStep = 0.01;
 var lastNdays = 3 * 1/24;
 var recency_threshold = 0.4;
+var everyNminutes = 15;
 
 // gui params
 var progress_delta = 0.002;
@@ -154,18 +148,10 @@ var carpel_noiseFactorMax = 1;
 var carpel_noiseFactorStep = 0.1;
 var carpel_opacity = 240;
 
-var guiGlobal;
-var guiSepals;
-var guiPetals;
-var guiStamens;
-var guiCarpel;
 var guis;
 
-
 var myTimeline;
-var JSONloaded = false;
 var timelineConstructed = false;
-var jsonInput;
 
 var center;
 var origin;
@@ -191,12 +177,10 @@ function setup() {
     // GUIs //
     /////////////////
     
-    // guiGlobal  = createGui('Global');
     guiLogarithmic  = createGui('Logarithmic');
 
     guis = [
         guiLogarithmic,
-        // guiGlobal,
     ]
     
     guiLogarithmic.addGlobals(
@@ -205,22 +189,8 @@ function setup() {
         'minLoga',
         'maxLoga',
     );
-
-    // guiGlobal.addGlobals(
-    //     'opacity',
-    //     'rotation',
-    //     'progress',
-    //     'background_hue',
-    //     'background_saturation',
-    //     'background_lightness',
-    //     'curve_tightness',
-    // );
     
     set_gui_styles('Logarithmic', {"top":"400px"});
-    set_gui_styles('Global',  {"left": (width - 200 - 20)  + "px", "top":"400px"});
-    set_gui_styles('Stamens', {"left": (width - 200 - 20)  + "px"});
-    set_gui_styles('Carpel',  {"left": (width - 200 - 240) + "px"});
-    set_gui_styles('Petals',  {"left":"240px"});
 
     toggleGUIs();
     
@@ -240,12 +210,9 @@ function setup() {
     noStroke();
     
     ellipseMode(CENTER);
-
-    // load timeline data
-    // $.getJSON("../scraping/data/samples/timeline-24h.json", function(json) {
-    $.getJSON("../scraping/data/timeline.json", function(json) {
-        onJsonLoaded(json);
-    });
+    
+    check_for_updates_timeline();
+    setInterval(check_for_updates_timeline, everyNminutes * 60 * 1000);
 
     // Don't loop automatically
     if (useNoLoop) {
@@ -254,15 +221,24 @@ function setup() {
 }
 
 function onJsonLoaded(json) {
-    jsonInput = json;
-    JSONloaded = true;
-    draw();
+    if (timelineConstructed) {
+        // update existing timeline
+        myTimeline.update(json);
+        calc_flower_spiral();
+    }
+    else {
+        // init new timeline
+        initTimeline(json);
+    }
 }
 
-function init() {
+function initTimeline(jsonInput) {
     myTimeline = new Timeline(jsonInput);
-    
     timelineConstructed =  true;
+    calc_flower_spiral();
+}
+
+function calc_flower_spiral() {
     let timeline_angles = 
         myTimeline.events
         .map(function(event) {
@@ -279,77 +255,84 @@ function init() {
             return new Flower(value.position, settings);
         });
     console.log("flower_spiral constructed of length:", flower_spiral.length);
-    flower_spiral.map(function(flower) {
-        flower.draw(); 
-    });
 }
 
 function draw() {
     clear();
     background(hsluvToP5Rgb(background_hue, background_saturation, background_lightness));
     
-    push();
-        translate(center.x, center.y);
-        rotate( millis() / (60 * 60 * 1000) * 2 * Math.PI );
-        drawSpiral(spiral_logarithmic, spiral_hue, draw_ellipse, false);
-        drawFlowers();
-    pop();
+    if (timelineConstructed) {
+        push();
+            translate(center.x, center.y);
+            rotate( millis() / (60 * 60 * 1000) * 2 * Math.PI );
+            drawSpiral(spiral_logarithmic, spiral_hue, draw_ellipse, false);
+            drawFlowers();
+        pop();
+    }
 
 }
 
+function check_for_updates_timeline() {
+    console.log("check_for_updates_timeline");
+    $.getJSON(timelinePath, function(json) {
+        onJsonLoaded(json);
+    });
+}
+
 function drawFlowers() {
-    if (JSONloaded && !timelineConstructed) {
-        init();
-    } else if (timelineConstructed) {
-        if (useTiming) {
-            console.time("flower.draw");
-        }
-        flower_spiral.map(function(flower) {
-            flower.update();
-            flower.draw(); 
-        });
-        if (useTiming) {
-            console.timeEnd("flower.draw");
-        }
+    if (useTiming) {
+        console.time("flower.draw");
+    }
+    flower_spiral.map(function(flower) {
+        flower.update();
+        flower.draw(); 
+    })
+    if (useTiming) {
+        console.timeEnd("flower.draw");
     }
 }
 
 function Timeline(jsonInput) {
     self = this;
-
-    self.inputs = jsonInput;
-
-    console.log("loaded inputs from JSON: ", self.inputs.length)
-    
-    let lastDate = new Date(self.inputs[0].time_stamp);
-    let minDate = new Date(lastDate);
-    minDate.setDate(lastDate.getDate() - lastNdays);
-    let logaDelta = maxLoga - minLoga;
-    
-    self.events = 
-        self.inputs
-        // turn timestamps into JS dates
-        .map(function(input, index, array) {
-            return _.set(input, 'date', new Date(input.time_stamp))
-        })
-        // filter last N days
-        .filter(function(input, index) {
-            if (input.date >= minDate ) {
-                return input;
-            }
-        })
-        // map to angle between 0 and N * 2 PI
-        .map(function(input, index, array) {
-            return _.set(input, 'angle', map(input.date.getTime(), minDate.getTime(), lastDate.getTime(), 0, logaDelta))
-        });
-
+    self.init = function (jsonInput) {
+        self.inputs = jsonInput;
+        self.calc_events();
+        console.log("loaded inputs from JSON: ", self.inputs.length)
+    }
+    self.calc_events = function () {
+        let lastDate = new Date(self.inputs[0].time_stamp);
+        let minDate = new Date(lastDate);
+        minDate.setDate(lastDate.getDate() - lastNdays);
+        let logaDelta = maxLoga - minLoga;
+        self.events = 
+            self.inputs
+            // turn timestamps into JS dates
+            .map(function(input, index, array) {
+                return _.set(input, 'date', new Date(input.time_stamp))
+            })
+            // filter last N days
+            .filter(function(input, index) {
+                if (input.date >= minDate ) {
+                    return input;
+                }
+            })
+            // map to angle between 0 and N * 2 PI
+            .map(function(input, index, array) {
+                return _.set(input, 'angle', map(input.date.getTime(), minDate.getTime(), lastDate.getTime(), 0, logaDelta))
+            });
+    };
+    self.update = function (jsonInput) {
+        self.inputs = jsonInput;
+        self.calc_events()
+    };
     self.get_angle = function (index) {
         return self.events[index].angle;
-    }
+    };
     self.get_event = function (index) {
         return self.events[index];
-    }
+    };
 
+    self.init(jsonInput);
 }
 
 function get_spiral_logarithmic(center, angles) {
@@ -449,7 +432,7 @@ function map_return_to_flower_settings(returnedItem, angleRatio, radiusRatio) {
         'curve_tightness': returnedItem['years_ago'],
         'noiseFactor': noiseFactor,
         'rotation': _.random(0,360),
-        'progress': 1,
+        'progress': 0,
         'recency': radiusRatio,
         'progress_delta': progress_delta,
         'recency_threshold': recency_threshold,
