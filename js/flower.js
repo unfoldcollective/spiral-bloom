@@ -125,12 +125,12 @@ function Flower(position, settings) {
                 let layer1_positions_noisified = 
                     layer1_positions
                     .map(function(position, leafPointIndex) {
-                        return p5.Vector.add(position, self.petals.noises[leafIndex][leafPointIndex]);
+                        return p5.Vector.add(position, p5.Vector.mult(self.petals.noises[leafIndex][leafPointIndex], petals_progress));
                     });
                 let layer2_positions_noisified = 
                     layer2_positions
                     .map(function(position, leafPointIndex) {
-                        return p5.Vector.add(position, self.petals.noises[leafIndex][leafPointIndex]);
+                        return p5.Vector.add(position, p5.Vector.mult(self.petals.noises[leafIndex][leafPointIndex], petals_progress));
                     });
 
                 // attach base point to flower center
