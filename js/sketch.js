@@ -240,7 +240,7 @@ function setup() {
     // $.getJSON("../data/timeline-sample-uniquetimestamps.json", function(json) {
     // $.getJSON("../data/timeline.json", function(json) {
     // $.getJSON("../data/sample.json", function(json) {
-    $.getJSON("../data/timeline-24h.json", function(json) {
+    $.getJSON("../scraping/data/samples/timeline-24h.json", function(json) {
         onJsonLoaded(json);
     });
 
