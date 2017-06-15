@@ -1,5 +1,21 @@
 var useNoLoop = false;
-var useNoLoop = true;
+var useTiming = false;
+// var useNoLoop = true;
+// var useTiming = true;
+
+var a2 = 0.01;
+var a2Min = 0;
+var a2Max = 1;
+var a2Step = 0.01;
+var b2 = 0.245;
+var b2Min = 0;
+var b2Max = 0.3;
+var b2Step = 0.001;
+var colorLoga = [0, 0, 255];
+var minLoga = 4 * Math.PI * 2;
+var maxLoga = 7 * Math.PI * 2;
+var maxLogaStep = 0.01;
+var lastNdays = 3 * 1/24;
 
 // gui params
 var progress_delta = 0.002;
@@ -30,7 +46,7 @@ var seedDeltaMax = 0.1;
 var seedDeltaStep = 0.001;
 var spiral_hue = background_hue;
 var spiral_saturation = background_saturation;
-var spiral_lightness = 10;
+var spiral_lightness = 30;
 
 var rotation = 0;
 var rotationMin = 0;
@@ -89,7 +105,7 @@ var petals_noiseFactorStep = 0.1;
 
 var stamens_amount = 20;
 var stamens_amountMin = 3;
-var stamens_amountMax = 40;
+var stamens_amountMax = 20;
 var stamens_radius = 100;
 var stamens_radiusMin = 50;
 var stamens_radiusMax = 300;
@@ -152,25 +168,13 @@ var jsonInput;
 
 var center;
 
-var a2 = 0.01;
-var a2Min = 0;
-var a2Max = 1;
-var a2Step = 0.01;
-var b2 = 0.245;
-var b2Min = 0;
-var b2Max = 0.3;
-var b2Step = 0.001;
-var colorLoga = [0, 0, 255];
-var minLoga = 5 * Math.PI * 2;
-var maxLoga = 7 * Math.PI * 2;
-var maxLogaStep = 0.01;
-
 var colorData = [0, 255, 0];
 
 var guiLogarithmic;
 
 var spiral_logarithmic;
 var flower_spiral;
+var maxRadius;
 
 p5.disableFriendlyErrors = true;
 
@@ -223,7 +227,7 @@ function setup() {
     let baseAngles = _.range(1000).map(function(value) {return value * 0.1});
     spiral_logarithmic = get_spiral_logarithmic(center, baseAngles)
         .filter(function(value, index) {
-            if (value.angle >= minLoga && value.angle <= maxLoga ) {
+            if (value.angle >= minLoga && value.angle <= (maxLoga + 0.01 * Math.PI) ) {
                 return value;
             }
         });
@@ -262,7 +266,8 @@ function init() {
             return event.angle + minLoga
         });
     let timeline_spiral = get_spiral_logarithmic(center, timeline_angles);
-    let maxRadius = get_spiral_radius_logarithmic(center, _.max(timeline_angles));
+    maxRadius = get_spiral_radius_logarithmic(center, _.max(timeline_angles));
+    
     flower_spiral = timeline_spiral
         .map(function(value, index, array) {
             let radiusRatio = value.radius / maxRadius;
@@ -285,24 +290,26 @@ function draw() {
     if (JSONloaded && !timelineConstructed) {
         init();
     } else if (timelineConstructed) {
-        console.time("flower.draw");
+        if (useTiming) {
+            console.time("flower.draw");
+        }
         flower_spiral.map(function(flower) {
             flower.update();
             flower.draw(); 
         });
-        console.timeEnd("flower.draw");
+        if (useTiming) {
+            console.timeEnd("flower.draw");
+        }
     }
 }
 
 function Timeline(jsonInput) {
     self = this;
-    
-    // sort oldest before latest
-    // jsonInput.reverse();
+
     self.inputs = jsonInput;
+
+    console.log("loaded inputs from JSON: ", self.inputs.length)
     
-    // let firstDate = new Date(self.inputs[0]['time_stamp']);
-    let lastNdays = 0.25;
     let lastDate = new Date(self.inputs[0].time_stamp);
     let minDate = new Date(lastDate);
     minDate.setDate(lastDate.getDate() - lastNdays);
@@ -349,34 +356,41 @@ function get_spiral_logarithmic(center, angles) {
 }
 
 function drawSpiral(position_objects, hue, drawing_function, draw_points=true, draw_lines=true) {
-    position_objects.map(function(value, index, array) {
-        let alpha = map(value.angle, array[0].angle, array[array.length-1].angle, 0, 255);
-        let lightness = map(value.angle, array[0].angle, array[array.length-1].angle, 0, 70);
-        let point_color = hslaToP5RGBA([hue, 100, lightness, alpha]);
-        let line_color = hslaToP5RGBA([hue, spiral_saturation, spiral_lightness, alpha]);
+    position_objects.map(function(spiral_point, index, array) {
+        let angleRatio  = spiral_point.angle / (maxLoga - minLoga);
+        let radiusRatio = spiral_point.radius / maxRadius;
+        let saturation  = spiral_saturation;
+        let lightness   = spiral_lightness;
+        let alpha       = radiusRatio * 255;
+        let strokeW     = radiusRatio * 3;
+        
+        let point_color = hslaToP5RGBA([hue, 100       , lightness, alpha]);
+        let line_color  = hslaToP5RGBA([hue, saturation, lightness, alpha]);
         
         if (draw_points) {
             fill(point_color);
-            drawing_function(value.position.x, value.position.y, value.radius * 0.8, value.radius * 0.8);
+            drawing_function(spiral_point.position.x, spiral_point.position.y, spiral_point.radius * 0.8, spiral_point.radius * 0.8);
             noFill();
         }
 
         let position_prev;
         if (index > 0) {
-            position_prev = get_spiral_pos_logarithmic(center, array[index-1].angle);
+            position_prev = array[index-1].position;
         } else {
             position_prev = center;
         }
 
         if (draw_lines) {
+            strokeWeight(strokeW);
             stroke(line_color);
             line(
                 position_prev.x, position_prev.y,
-                value.position.x, value.position.y
+                spiral_point.position.x, spiral_point.position.y
             )
-            noStroke();            
+            strokeWeight(1);
+            // noStroke();    
         }
-        return value;
+        return spiral_point;
     });
 }
 
@@ -473,7 +487,7 @@ function map_return_to_flower_settings(returnedItem, angleRatio, radiusRatio) {
         'curve_tightness': returnedItem['years_ago'],
         'noiseFactor': noiseFactor,
         'rotation': _.random(0,360),
-        'progress': 0.4,
+        'progress': 0.1,
         'recency': radiusRatio,
         'progress_delta': progress_delta,
 
