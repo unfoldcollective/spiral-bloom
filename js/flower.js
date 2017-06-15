@@ -42,12 +42,19 @@ function Flower(position, settings) {
             .map(function(value) {
                 return getPosOnCircle(self.position, sepals_progress * self.settings.sepals_radius, self.settings.rotation, self.settings.sepals_amount, value);
             })
-            .map(function(center) {
+            .map(function(center, leafIndex) {
                 let positions = get_leaf_positions(center, sepals_progress * self.settings.sepals_size, self.settings.sepals_nPoints);
-                let base_index = index_closest_to(positions, self.position);
+
+                let positions_noisified = 
+                    positions
+                    .map(function(position, leafPointIndex) {
+                        return p5.Vector.add(position, self.sepals.noises[leafIndex][leafPointIndex]);
+                    });
+                // attach base point to flower center
+                positions_noisified[index_closest_to(positions_noisified, self.position)] = self.position;
+
                 return {
-                    positions: positions,
-                    base_index: base_index
+                    positions: positions_noisified
                 };
             });
     };
@@ -250,14 +257,7 @@ function Flower(position, settings) {
     this.draw = function () {   
         curveTightness(self.settings.curve_tightness);     
         self.sepals.leaves.map(function(leaf, leafIndex) {
-            let positions_noisified = 
-                leaf.positions
-                .map(function(position, leafPointIndex) {
-                    return p5.Vector.add(position, self.petals.noises[leafIndex][leafPointIndex]);
-                });
-            // attach base point to flower center
-            positions_noisified[leaf.base_index] = self.position;
-            draw_leaf_from_pos(positions_noisified, self.sepals.colors[leafIndex]);
+            draw_leaf_from_pos(leaf.positions, self.sepals.colors[leafIndex]);
         });
 
         self.petals.leaves.map(function(leaf, leafIndex) {
