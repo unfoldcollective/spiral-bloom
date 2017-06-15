@@ -262,9 +262,12 @@ function init() {
             return event.angle + minLoga
         });
     let timeline_spiral = get_spiral_logarithmic(center, timeline_angles);
+    let maxRadius = get_spiral_radius_logarithmic(center, _.max(timeline_angles));
     flower_spiral = timeline_spiral
         .map(function(value, index, array) {
-            let settings = map_return_to_flower_settings(myTimeline.get_event(index), myTimeline.get_angle(index));
+            let radiusRatio = value.radius / maxRadius;
+            let angleRatio = value.angle / (maxLoga - minLoga);
+            let settings = map_return_to_flower_settings(myTimeline.get_event(index), angleRatio, radiusRatio);
             return new Flower(value.position, settings);
         });
     console.log("flower_spiral constructed of length:", flower_spiral.length);
@@ -457,7 +460,10 @@ function get_global_settings() {
     };
 }
 
-function map_return_to_flower_settings(returnedItem, angle) {
+function map_return_to_flower_settings(returnedItem, angleRatio, radiusRatio) {
+    // returnedItem: all scraped data attrs
+    // angleRatio: angle along spiral (increases linearly {0,1})
+    // radiusRatio: ratio of item radius to max radius (increases logarithmically {0,1})
     mapped_settings =  {
         'opacity': opacity,
         'background_hue': background_hue,
@@ -467,8 +473,8 @@ function map_return_to_flower_settings(returnedItem, angle) {
         'curve_tightness': returnedItem['years_ago'],
         'noiseFactor': noiseFactor,
         'rotation': _.random(0,360),
-        'progress': 0.3,
-        'recency': angle / (maxLoga - minLoga),
+        'progress': 0.4,
+        'recency': radiusRatio,
         'progress_delta': progress_delta,
 
         'sepals_amount': 2 + returnedItem['publisher_n_words'] || sepals_amountMin,
