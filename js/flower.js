@@ -237,7 +237,7 @@ function Flower(position, settings) {
                 let stem_positions = [
                     self.position.x + self.stamens.noises[centerIndex].x, self.position.y + self.stamens.noises[centerIndex].y, 
                     self.position.x, self.position.y, 
-                    center.x + self.stamens.noises[centerIndex].x, center.y + self.stamens.noises[centerIndex].y, 
+                    center.x + stamens_progress * self.stamens.noises[centerIndex].x, center.y + stamens_progress * self.stamens.noises[centerIndex].y, 
                     center.x + stamens_progress * 0.2 * self.settings.stamens_radius * self.stamens.noises[centerIndex].x, center.y + stamens_progress * 0.2 * self.settings.stamens_radius * self.stamens.noises[centerIndex].y, 
                 ];
 
