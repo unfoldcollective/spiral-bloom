@@ -4,6 +4,25 @@ function Flower(position, settings) {
     self.settings = settings;
     self.settings.carpel_radius = self.settings.carpel_size;
 
+    self.init = function () {
+        self.check_recency();
+
+        self.calc_sepals_noises();
+        self.calc_sepals_colors();
+        self.calc_sepals_leaves();
+
+        self.calc_petals_noises();
+        self.calc_petals_colors();
+        self.calc_petals_leaves();
+        
+        self.calc_stamens_noises();
+        self.calc_stamens_colors();
+        self.calc_stamens_parts();
+
+        self.calc_carpel_colors();
+        self.calc_carpel_parts();
+    }
+
     ////////////
     // SEPALS //
     //////////// 
@@ -58,10 +77,6 @@ function Flower(position, settings) {
                 };
             });
     };
-
-    self.calc_sepals_noises();
-    self.calc_sepals_colors();
-    self.calc_sepals_leaves();
     
     ////////////
     // PETALS //
@@ -153,10 +168,6 @@ function Flower(position, settings) {
                 return part;
             });
     };
-    
-    self.calc_petals_noises();
-    self.calc_petals_colors();
-    self.calc_petals_leaves();
 
     ////////////
     // CARPEL //
@@ -192,9 +203,6 @@ function Flower(position, settings) {
                 
             });
     };
-
-    self.calc_carpel_colors();
-    self.calc_carpel_parts();
 
     ////////////
     // STAMEN //
@@ -248,11 +256,6 @@ function Flower(position, settings) {
             });
     };
 
-    self.calc_stamens_noises();
-    self.calc_stamens_colors();
-    self.calc_stamens_parts();
-
-
     // Draw Flower
     self.draw = function () {   
         curveTightness(self.settings.curve_tightness);     
@@ -294,6 +297,12 @@ function Flower(position, settings) {
         self.calc_stamens_parts();
     };
 
+    self.check_recency = function () {
+        if (self.settings.recency < this.settings.recency_threshold) {
+            _.set(self.settings, "curve_tightness", 1);
+        }
+    };
+
     self.draw_stem_from_pos = function (positions, colorHSLA) {
         stroke(hslaToP5RGBA(colorHSLA));
         if (self.settings.curve_tightness != 1) {
@@ -324,8 +333,9 @@ function Flower(position, settings) {
         }
         noStroke();
         noFill();    
-    }
+    };
 
+    self.init();
 }
 
 // drawing functions

@@ -1,6 +1,6 @@
 var useNoLoop = false;
 var useTiming = false;
-// var useNoLoop = true;
+var useNoLoop = true;
 // var useTiming = true;
 
 var a2 = 0.01;
@@ -16,6 +16,7 @@ var minLoga = 4 * Math.PI * 2;
 var maxLoga = 7 * Math.PI * 2;
 var maxLogaStep = 0.01;
 var lastNdays = 3 * 1/24;
+var recency_threshold = 0.4;
 
 // gui params
 var progress_delta = 0.002;
@@ -425,55 +426,6 @@ function hslaToP5RGBA(hslaColor) {
     return color(rgb[0] * 255, rgb[1] * 255, rgb[2] * 255, hslaColor[3]);
 }
 
-function get_global_settings() {
-    return {
-        'opacity': opacity,
-        'background_hue': background_hue,
-        'hue_exclude_range': hue_exclude_range,
-        'hue_noise_scale': hue_noise_scale,
-        'lightness_noise_scale': lightness_noise_scale,
-        'curve_tightness': curve_tightness,
-        'noiseFactor': noiseFactor,
-        'rotation': rotation,
-        'progress': progress,
-        'progress_delta': progress_delta,
-
-        'sepals_amount': sepals_amount,
-        'sepals_radius': sepals_radius,
-        'sepals_size': sepals_size,
-        'sepals_c_saturation': sepals_c_saturation,
-        'sepals_c_lightness': sepals_c_lightness,
-        'sepals_nPoints': sepals_nPoints,
-        'sepals_noiseFactor': sepals_noiseFactor,
-
-        'petals_amount': petals_amount,
-        'petals_radius': petals_radius,
-        'petals_size': petals_size,
-        'petals_c_saturation': petals_c_saturation,
-        'petals_c_lightness': petals_c_lightness,
-        'petals_nPoints': petals_nPoints,
-        'petals_noiseFactor': petals_noiseFactor,
-
-        'stamens_amount': stamens_amount,
-        'stamens_radius': stamens_radius,
-        'stamens_size': stamens_size,
-        'stamens_c_hue': stamens_c_hue,
-        'stamens_c_saturation': stamens_c_saturation,
-        'stamens_c_lightness': stamens_c_lightness,
-        'stamens_nPoints': stamens_nPoints,
-        'stamens_noiseFactor': stamens_noiseFactor,
-
-        'carpel_amount': carpel_amount,
-        'carpel_radius': carpel_radius,
-        'carpel_size': carpel_size,
-        'carpel_c_saturation': carpel_c_saturation,
-        'carpel_c_lightness': carpel_c_lightness,
-        'carpel_nPoints': carpel_nPoints,
-        'carpel_noiseFactor': carpel_noiseFactor,
-        'carpel_opacity': carpel_opacity,
-    };
-}
-
 function map_return_to_flower_settings(returnedItem, angleRatio, radiusRatio) {
     // returnedItem: all scraped data attrs
     // angleRatio: angle along spiral (increases linearly {0,1})
@@ -487,9 +439,10 @@ function map_return_to_flower_settings(returnedItem, angleRatio, radiusRatio) {
         'curve_tightness': returnedItem['years_ago'],
         'noiseFactor': noiseFactor,
         'rotation': _.random(0,360),
-        'progress': 0.1,
+        'progress': 1,
         'recency': radiusRatio,
         'progress_delta': progress_delta,
+        'recency_threshold': recency_threshold,
 
         'sepals_amount': 2 + returnedItem['publisher_n_words'] || sepals_amountMin,
         'sepals_radius': map(returnedItem['publisher_length'], 0, 30, sepals_radiusMin, sepals_radiusMax) || sepals_radiusMin,
