@@ -1,6 +1,6 @@
 var useNoLoop = false;
 var useTiming = false;
-var useNoLoop = true;
+// var useNoLoop = true;
 // var useTiming = true;
 
 var a2 = 0.01;
@@ -168,6 +168,7 @@ var timelineConstructed = false;
 var jsonInput;
 
 var center;
+var origin;
 
 var colorData = [0, 255, 0];
 
@@ -225,8 +226,9 @@ function setup() {
     
     // base spiral
     center = createVector(width * 0.5, height * 0.5);
+    origin = createVector(0, 0);
     let baseAngles = _.range(1000).map(function(value) {return value * 0.1});
-    spiral_logarithmic = get_spiral_logarithmic(center, baseAngles)
+    spiral_logarithmic = get_spiral_logarithmic(origin, baseAngles)
         .filter(function(value, index) {
             if (value.angle >= minLoga && value.angle <= (maxLoga + 0.01 * Math.PI) ) {
                 return value;
@@ -266,8 +268,8 @@ function init() {
         .map(function(event) {
             return event.angle + minLoga
         });
-    let timeline_spiral = get_spiral_logarithmic(center, timeline_angles);
-    maxRadius = get_spiral_radius_logarithmic(center, _.max(timeline_angles));
+    let timeline_spiral = get_spiral_logarithmic(origin, timeline_angles);
+    maxRadius = get_spiral_radius_logarithmic(origin, _.max(timeline_angles));
     
     flower_spiral = timeline_spiral
         .map(function(value, index, array) {
@@ -286,8 +288,16 @@ function draw() {
     clear();
     background(hsluvToP5Rgb(background_hue, background_saturation, background_lightness));
     
-    drawSpiral(spiral_logarithmic, spiral_hue, draw_ellipse, false);
+    push();
+        translate(center.x, center.y);
+        rotate( millis() / (60 * 60 * 1000) * 2 * Math.PI );
+        drawSpiral(spiral_logarithmic, spiral_hue, draw_ellipse, false);
+        drawFlowers();
+    pop();
 
+}
+
+function drawFlowers() {
     if (JSONloaded && !timelineConstructed) {
         init();
     } else if (timelineConstructed) {
