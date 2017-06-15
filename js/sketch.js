@@ -517,7 +517,7 @@ function map_return_to_flower_settings(returnedItem, angle) {
         'curve_tightness': returnedItem['years_ago'],
         'noiseFactor': noiseFactor,
         'rotation': angle,
-        'progress': 0.1,
+        'progress': 0,
         'progress_delta': progress_delta,
 
         'sepals_amount': 2 + returnedItem['publisher_n_words'] || sepals_amountMin,

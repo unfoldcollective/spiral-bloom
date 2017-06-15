@@ -36,7 +36,7 @@ function Flower(position, settings) {
     };
 
     self.calc_sepals_leaves = function() {
-        let sepals_progress = gompertz(self.settings.progress);
+        let sepals_progress = gompertz(self.settings.progress, a=1, b=3, c=5);
         self.sepals.leaves = 
             self.sepals.indexes
             .map(function(value) {
@@ -111,7 +111,7 @@ function Flower(position, settings) {
 
 
     self.calc_petals_leaves = function() {
-        let petals_progress = gompertz(self.settings.progress);
+        let petals_progress = gompertz(self.settings.progress, a=1, b=5, c=5);
         self.petals.leaves = 
             self.petals.indexes
             .map(function(value) {
@@ -180,7 +180,7 @@ function Flower(position, settings) {
     };
 
     self.calc_carpel_parts = function () {
-        let carpel_progress = gompertz(self.settings.progress);
+        let carpel_progress = gompertz(self.settings.progress, a=1, b=5, c=6);
         self.carpel.parts =
             self.carpel.indexes
             .map(function(index) {
@@ -227,7 +227,7 @@ function Flower(position, settings) {
     };
 
     self.calc_stamens_parts = function () {
-        let stamens_progress = gompertz(self.settings.progress);
+        let stamens_progress = gompertz(self.settings.progress, a=1, b=5, c=4);
         self.stamens.parts =
             self.stamens.indexes
             .map(function(index) {
