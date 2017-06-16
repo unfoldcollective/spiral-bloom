@@ -14,9 +14,20 @@ function Feed(jsonInput, selector="#feed ul") {
         
         // add new content
         self.latest3 = _.slice(self.inputs,0,3);
-        _.forEach(self.latest3, function (input) {
-            self.addInputToFeed(input);
-        })
+        
+        var intervalID1 = setTimeout(function(){
+            self.addInputToFeed(self.inputs[0])
+        }, 1000);
+        var intervalID2 = setTimeout(function(){
+            self.addInputToFeed(self.inputs[1])
+        }, 2000);
+        var intervalID3 = setTimeout(function(){
+            self.addInputToFeed(self.inputs[2])
+        }, 3000);
+
+        // _.forEach(self.latest3, function (input) {
+        //     self.addInputToFeed(input);
+        // })
     };
     self.addInputToFeed = function (input) {
         let $item = self.createItemFromInput(input)
