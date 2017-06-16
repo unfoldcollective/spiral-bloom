@@ -300,6 +300,7 @@ function drawFlowers() {
 
 function Timeline(jsonInput) {
     let self = this;
+    self.filter_length = 15;
     self.init = function (jsonInput) {
         self.inputs = jsonInput;
         self.calc_events();
@@ -316,17 +317,16 @@ function Timeline(jsonInput) {
             .map(function(input, index, array) {
                 return _.set(input, 'date', new Date(input.time_stamp))
             })
-            // filter last N days
-            .filter(function(input, index) {
-                if (input.date >= minDate ) {
-                    return input;
-                }
-            })
-            // map to angle between 0 and N * 2 PI
+            // add angle between 0 and N * 2 PI
             .map(function(input, index, array) {
                 return _.set(input, 'angle', map(input.date.getTime(), minDate.getTime(), lastDate.getTime(), 0, logaDelta))
             });
+
+        // take the first (latest) filter_length number of items
+        self.events = _.slice(self.events, 0, self.filter_length);
     };
+
+
     self.update = function (jsonInput) {
         console.log('Timeline.update()')
         self.inputs = jsonInput;
