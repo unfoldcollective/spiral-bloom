@@ -10,14 +10,15 @@ var minLoga = 4 * Math.PI * 2;
 var maxLoga = 7 * Math.PI * 2;
 var lastNdays = 3 * 1/24;
 var recency_threshold = 0.4;
-var everyNminutes = 0.1;
+var everyNminutes = 15;
 var progress_delta = 0.002;
 
 // gui params
 var opacity = 220;
 var opacityMin = 0;
 var opacityMax = 255;
-var background_hue = 89;
+// var background_hue = 89;
+var background_hue = 30;
 var background_hueMin = 0;
 var background_hueMax = 360;
 var background_saturation = 50;
@@ -264,7 +265,7 @@ function calc_flower_spiral() {
 
 function draw() {
     clear();
-    background(hsluvToP5Rgb(background_hue, background_saturation, background_lightness));
+    // background(hsluvToP5Rgb(background_hue, background_saturation, background_lightness));
     
     if (timelineConstructed) {
         push();
