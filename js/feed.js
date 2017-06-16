@@ -7,7 +7,7 @@ function Feed(jsonInput, selector="#feed ul") {
     }
 
     self.update = function () {
-        console.log('Feed.update()')
+        // console.log('Feed.update()')
         
         // empty feed
         self.feedElem.empty();
@@ -34,8 +34,8 @@ function Feed(jsonInput, selector="#feed ul") {
         self.addItemToFeed($item);
     }
     self.createItemFromInput = function (input) {
-        console.log("creating item for: ", input);
-        let borrowed = input.time_stamp;
+        // console.log("creating item for: ", input);
+        let time_ago = $.timeago(input.time_stamp);
         let title = input.title;
         let author = input.author || "?";
         let iconName;
@@ -58,7 +58,7 @@ function Feed(jsonInput, selector="#feed ul") {
             </div>\
             <div class="dtc v-top pv1 ph3">\
               <h3 class="f6 fw4 lh-title black-50">Vrátené</h1>\
-              <h2 class="f5 fw4 lh-title mt1 black">'+borrowed+'</h2>\
+              <h2 class="f5 fw4 lh-title mt1 black">'+time_ago+'</h2>\
             </div>\
             <div class="dtc v-top pv1 ph3">\
               <h3 class="f6 fw4 lh-title black-50">Názov</h1>\
