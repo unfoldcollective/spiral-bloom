@@ -16,24 +16,24 @@ function Feed(jsonInput, selector="#feed ul") {
         self.latest3 = _.slice(self.inputs,0,3);
         
         var intervalID1 = setTimeout(function(){
-            self.addInputToFeed(self.inputs[0])
+            self.addInputToFeed(self.inputs[0], 0)
         }, 1000);
         var intervalID2 = setTimeout(function(){
-            self.addInputToFeed(self.inputs[1])
+            self.addInputToFeed(self.inputs[1], 1)
         }, 2000);
         var intervalID3 = setTimeout(function(){
-            self.addInputToFeed(self.inputs[2])
+            self.addInputToFeed(self.inputs[2], 2)
         }, 3000);
 
         // _.forEach(self.latest3, function (input) {
         //     self.addInputToFeed(input);
         // })
     };
-    self.addInputToFeed = function (input) {
-        let $item = self.createItemFromInput(input)
+    self.addInputToFeed = function (input, flowerIndex) {
+        let $item = self.createItemFromInput(input, flowerIndex)
         self.addItemToFeed($item);
     }
-    self.createItemFromInput = function (input) {
+    self.createItemFromInput = function (input, flowerIndex) {
         // console.log("creating item for: ", input);
         let time_ago = $.timeago(input.time_stamp);
         let title = input.title;
@@ -48,11 +48,13 @@ function Feed(jsonInput, selector="#feed ul") {
         else if (input.type == "eVideo") {
             iconName = "icon-watch";
         }
+        let flowerColor = hslaToP5RGBA(flower_spiral[flowerIndex].petals.color1);
+        let bgColor = 'rgba('+flowerColor.levels[0]+','+flowerColor.levels[1]+','+flowerColor.levels[2]+','+flowerColor.levels[3]+')';
 
         htmlString = '\
         <li class="animated fadeInUp dt bb b--black-05 pa2 mt2 shadow-5" href="#0">\
             <div class="dtc">\
-              <div class="dtc v-mid w3 h3  bg-light-blue">\
+              <div class="dtc v-mid w3 h3" style="background-color: '+bgColor+'">\
                 <img src="/img/'+iconName+'.png" class="db w2 h2 center">\
               </div>\
             </div>\
