@@ -300,7 +300,8 @@ function drawFlowers() {
 
 function Timeline(jsonInput) {
     let self = this;
-    self.filter_length = 15;
+    self.min_length = 3;
+    self.max_length = 30;
     self.init = function (jsonInput) {
         self.inputs = jsonInput;
         self.calc_events();
@@ -322,8 +323,21 @@ function Timeline(jsonInput) {
                 return _.set(input, 'angle', map(input.date.getTime(), minDate.getTime(), lastDate.getTime(), 0, logaDelta))
             });
 
-        // take the first (latest) filter_length number of items
-        self.events = _.slice(self.events, 0, self.filter_length);
+        // filter to have not too much AND not too little
+        let filteredEvents = self.events
+            // filter last N days
+            .filter(function(event, index) {
+                if (event.date >= minDate ) {
+                    return event;
+                }
+            })
+        if (filteredEvents.length < self.min_length) {
+            filteredEvents = _.slice(self.events, 0, self.min_length);
+        }
+        else if (filteredEvents.length > self.max_length) {
+            filteredEvents = _.slice(self.events, 0, self.max_length);
+        }
+        self.events = filteredEvents;
     };
 
 
