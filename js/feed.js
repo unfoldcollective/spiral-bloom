@@ -38,11 +38,22 @@ function Feed(jsonInput, selector="#feed ul") {
         let borrowed = input.time_stamp;
         let title = input.title;
         let author = input.author || "?";
+        let iconName;
+        if (input.type == "eBook" || input.type == "ePub" || input.type == "ePaper") {
+            iconName = "icon-read";
+        }
+        else if (input.type == "eAudio" || input.type == "eMusic") {
+            iconName = "icon-listen";
+        }
+        else if (input.type == "eVideo") {
+            iconName = "icon-watch";
+        }
+
         htmlString = '\
         <li class="animated fadeInUp dt bb b--black-05 pa2 mt2 shadow-5" href="#0">\
             <div class="dtc">\
               <div class="dtc v-mid w3 h3  bg-light-blue">\
-                <img src="/img/icon-read.png" class="db w2 h2 center">\
+                <img src="/img/'+iconName+'.png" class="db w2 h2 center">\
               </div>\
             </div>\
             <div class="dtc v-top pv1 ph3">\
