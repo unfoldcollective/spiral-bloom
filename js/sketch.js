@@ -10,7 +10,7 @@ var minLoga = 4 * Math.PI * 2;
 var maxLoga = 7 * Math.PI * 2;
 var lastNdays = 3 * 1/24;
 var recency_threshold = 0.4;
-var everyNminutes = 15;
+var everyNminutes = 0.1;
 var progress_delta = 0.002;
 
 // gui params
@@ -298,7 +298,7 @@ function drawFlowers() {
 }
 
 function Timeline(jsonInput) {
-    self = this;
+    let self = this;
     self.init = function (jsonInput) {
         self.inputs = jsonInput;
         self.calc_events();
@@ -327,8 +327,9 @@ function Timeline(jsonInput) {
             });
     };
     self.update = function (jsonInput) {
+        console.log('Timeline.update()')
         self.inputs = jsonInput;
-        self.calc_events()
+        self.calc_events();
     };
     self.get_angle = function (index) {
         return self.events[index].angle;
@@ -341,7 +342,7 @@ function Timeline(jsonInput) {
 }
 
 function Feed(jsonInput, selector="#feed") {
-    self = this;
+    let self = this;
     self.init = function () {
         self.inputs = jsonInput;
         self.feedElem = $(selector)
@@ -349,6 +350,7 @@ function Feed(jsonInput, selector="#feed") {
     }
 
     self.update = function () {
+        console.log('Feed.update()')
         self.latest3 = _.slice(self.inputs,0,3);
         _.forEach(self.latest3, function (input) {
             self.addInputToFeed(input);
