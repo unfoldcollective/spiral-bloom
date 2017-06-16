@@ -1,0 +1,19 @@
+ul#feed {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+}
+
+ul#feed li {
+  list-style: none;
+  background: #d1703c;
+  color: #fff;
+  line-height: 2em;
+  padding: 0 0.5em;
+  
+  overflow: hidden;
+  width: 10em;
+  
+  height: 2em;
+  margin: 2px 0;
+}

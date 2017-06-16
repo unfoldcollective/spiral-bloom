@@ -11,9 +11,9 @@ var maxLoga = 7 * Math.PI * 2;
 var lastNdays = 3 * 1/24;
 var recency_threshold = 0.4;
 var everyNminutes = 15;
+var progress_delta = 0.002;
 
 // gui params
-var progress_delta = 0.002;
 var opacity = 220;
 var opacityMin = 0;
 var opacityMax = 255;
@@ -149,16 +149,15 @@ var carpel_noiseFactorStep = 0.1;
 var carpel_opacity = 240;
 
 var guis;
+var guiLogarithmic;
 
 var myTimeline;
+var myFeed;
 var timelineConstructed = false;
 
 var center;
 var origin;
 
-var colorData = [0, 255, 0];
-
-var guiLogarithmic;
 
 var spiral_logarithmic;
 var flower_spiral;
@@ -225,11 +224,17 @@ function onJsonLoaded(json) {
         // update existing timeline
         myTimeline.update(json);
         calc_flower_spiral();
+        myFeed.update(json);
     }
     else {
         // init new timeline
         initTimeline(json);
+        initFeed(json);
     }
+}
+
+function initFeed(jsonInput) {
+    myFeed = new Feed(jsonInput);
 }
 
 function initTimeline(jsonInput) {
@@ -333,6 +338,35 @@ function Timeline(jsonInput) {
     };
 
     self.init(jsonInput);
+}
+
+function Feed(jsonInput, selector="#feed") {
+    self = this;
+    self.init = function () {
+        self.inputs = jsonInput;
+        self.feedElem = $(selector)
+        self.update();
+    }
+
+    self.update = function () {
+        self.latest3 = _.slice(self.inputs,0,3);
+        _.forEach(self.latest3, function (input) {
+            self.addInputToFeed(input);
+        })
+    };
+    self.addInputToFeed = function (input) {
+        let $item = self.createItemFromInput(input)
+        self.addItemToFeed($item);
+    }
+    self.createItemFromInput = function (input) {
+        console.log("creating item for: ", input);
+        return $('<li class="animated fadeInUp">'+input.title+'</li>');        
+    };
+    self.addItemToFeed = function function_name($feedItem) {
+        self.feedElem.append($feedItem);
+    };
+    
+    self.init();
 }
 
 function get_spiral_logarithmic(center, angles) {
