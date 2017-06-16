@@ -341,36 +341,6 @@ function Timeline(jsonInput) {
     self.init(jsonInput);
 }
 
-function Feed(jsonInput, selector="#feed") {
-    let self = this;
-    self.init = function () {
-        self.inputs = jsonInput;
-        self.feedElem = $(selector)
-        self.update();
-    }
-
-    self.update = function () {
-        console.log('Feed.update()')
-        self.latest3 = _.slice(self.inputs,0,3);
-        _.forEach(self.latest3, function (input) {
-            self.addInputToFeed(input);
-        })
-    };
-    self.addInputToFeed = function (input) {
-        let $item = self.createItemFromInput(input)
-        self.addItemToFeed($item);
-    }
-    self.createItemFromInput = function (input) {
-        console.log("creating item for: ", input);
-        return $('<li class="animated fadeInUp">'+input.title+'</li>');        
-    };
-    self.addItemToFeed = function function_name($feedItem) {
-        self.feedElem.append($feedItem);
-    };
-    
-    self.init();
-}
-
 function get_spiral_logarithmic(center, angles) {
     return angles
         .map(function(value, index, array) {
