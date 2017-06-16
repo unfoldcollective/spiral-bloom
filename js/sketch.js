@@ -270,7 +270,7 @@ function draw() {
     if (timelineConstructed) {
         push();
             translate(center.x, center.y);
-            rotate( millis() / (60 * 60 * 1000) * 2 * Math.PI );
+            rotate( millis() / (15 * 60 * 1000) * 2 * Math.PI );
             drawSpiral(spiral_logarithmic, spiral_hue, draw_ellipse, false);
             drawFlowers();
         pop();
