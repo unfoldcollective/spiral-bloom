@@ -1,23 +1,16 @@
 html, body {
   background-color: #FADFD7;
 }
+
 #feed {
-  // position: absolute;
-  // top: 10%;
-  // left: 10%;
+  position: absolute;
+  top: 28rem;
+  left: 4rem;
 }
 
 #feed li {
   background: #FFFBFA;
   color: #2F2F2F;
-  // line-height: 2em;
-  // padding: 0 0.5em;
-  
-  // overflow: hidden;
-  // width: 10em;
-  
-  // height: 2em;
-  // margin: 2px 0;
 }
 
 .shadow-5 { box-shadow: -4px 4px 8px 0px rgba( 0, 0, 0, 0.2 ); }
