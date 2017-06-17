@@ -11,7 +11,7 @@ var maxLoga = 7 * Math.PI * 2;
 var lastNdays = 3 * 1/24;
 var recency_threshold = 0.4;
 var everyNminutes = 15;
-var progress_delta = 0.002;
+var progress_delta = 0.01;
 
 // gui params
 var opacity = 220;
@@ -75,6 +75,8 @@ var sepals_noiseFactor = 1;
 var sepals_noiseFactorMin = 0;
 var sepals_noiseFactorMax = 10;
 var sepals_noiseFactorStep = 0.1;
+var sepals_growth_b = 5;
+var sepals_growth_c = 7;
 
 var petals_amount = 6;
 var petals_amountMin = 3;
@@ -98,6 +100,8 @@ var petals_noiseFactor = 2;
 var petals_noiseFactorMin = 0;
 var petals_noiseFactorMax = 4;
 var petals_noiseFactorStep = 0.1;
+var petals_growth_b = 5;
+var petals_growth_c = 5;
 
 var stamens_amount = 20;
 var stamens_amountMin = 3;
@@ -124,6 +128,8 @@ var stamens_noiseFactor = 1;
 var stamens_noiseFactorMin = 0;
 var stamens_noiseFactorMax = 10;
 var stamens_noiseFactorStep = 0.1;
+var stamens_growth_b = 20;
+var stamens_growth_c = 5;
 
 var carpel_amount = 3;
 var carpel_amountMin = 3;
@@ -147,6 +153,8 @@ var carpel_noiseFactor = 0;
 var carpel_noiseFactorMin = 0;
 var carpel_noiseFactorMax = 1;
 var carpel_noiseFactorStep = 0.1;
+var carpel_growth_b = 5;
+var carpel_growth_c = 7;
 var carpel_opacity = 240;
 
 var guis;
@@ -465,6 +473,8 @@ function map_return_to_flower_settings(returnedItem, angleRatio, radiusRatio) {
         'sepals_c_saturation': sepals_c_saturation,
         'sepals_c_lightness': sepals_c_lightness,
         'sepals_nPoints': sepals_nPoints,
+        'sepals_growth_b': sepals_growth_b,
+        'sepals_growth_c': sepals_growth_c,
 
         'petals_amount': 2 + returnedItem['title_n_words'] || petals_amountMin,
         'petals_radius': map(returnedItem['title_length'], 2, 60, petals_radiusMin, petals_radiusMax) || petals_radiusMin,
@@ -473,6 +483,8 @@ function map_return_to_flower_settings(returnedItem, angleRatio, radiusRatio) {
         'petals_c_saturation': petals_c_saturation,
         'petals_c_lightness': petals_c_lightness,
         'petals_nPoints': petals_nPoints,
+        'petals_growth_b': petals_growth_b,
+        'petals_growth_c': petals_growth_c,
 
         'stamens_amount': constrain(map(returnedItem['description_n_words'], 0, 250, stamens_amountMin, stamens_amountMax), stamens_amountMin, stamens_amountMax) || stamens_amountMin,
         'stamens_radius': constrain(map(returnedItem['description_length'], 0, 1500, stamens_radiusMin, stamens_radiusMax), stamens_radiusMin, stamens_radiusMax) || stamens_radiusMin,
@@ -482,6 +494,8 @@ function map_return_to_flower_settings(returnedItem, angleRatio, radiusRatio) {
         'stamens_c_saturation': stamens_c_saturation,
         'stamens_c_lightness': stamens_c_lightness,
         'stamens_nPoints': stamens_nPoints,
+        'stamens_growth_b': stamens_growth_b,
+        'stamens_growth_c': stamens_growth_c,
 
         'carpel_amount': 1 + returnedItem['author_n_words'] || carpel_amountMin,
         'carpel_radius': map(returnedItem['author_length'], 0, 28, carpel_sizeMin, carpel_sizeMax) || carpel_sizeMin,
@@ -490,6 +504,8 @@ function map_return_to_flower_settings(returnedItem, angleRatio, radiusRatio) {
         'carpel_c_saturation': carpel_c_saturation,
         'carpel_c_lightness': carpel_c_lightness,
         'carpel_nPoints': carpel_nPoints,
+        'carpel_growth_b': carpel_growth_b,
+        'carpel_growth_c': carpel_growth_c,
         'carpel_opacity': carpel_opacity,
     };
     // console.log(angle)
