@@ -4,8 +4,6 @@ html, body {
 
 #feed {
   position: absolute;
-  top: 2rem;
-  left: 4rem;
 }
 
 #feed h1 {
@@ -18,4 +16,9 @@ html, body {
   color: #2F2F2F;
 }
 
+// overriding / supplementing Tachyons
 .shadow-5 { box-shadow: -4px 4px 8px 0px rgba( 0, 0, 0, 0.2 ); }
+.top-3 { top: 3rem; }
+.left-4 { left: 4rem; }
+.right-4 { right: 4rem; }
+.w-200px { width: 200px; }
