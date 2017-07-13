@@ -49,7 +49,7 @@ function Feed(jsonInput, selector="#feed ul") {
             iconName = "icon-watch";
         }
         let flowerColor = hslaToP5RGBA(flower_spiral[flowerIndex].petals.color1);
-        let bgColor = 'rgba('+flowerColor.levels[0]+','+flowerColor.levels[1]+','+flowerColor.levels[2]+','+flowerColor.levels[3]+')';
+        let bgColor = 'rgba('+flowerColor.levels[0]+','+flowerColor.levels[1]+','+flowerColor.levels[2]+',100)';
 
         htmlString = '\
         <li class="animated fadeInUp dt bb b--black-05 pa2 mt2 shadow-5" href="#0">\
