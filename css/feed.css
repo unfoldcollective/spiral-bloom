@@ -8,6 +8,11 @@ html, body {
   left: 4rem;
 }
 
+#feed h1 {
+  background: #FFFAF8;
+  color: #2F2F2F;
+}
+
 #feed li {
   background: #FFFAF8;
   color: #2F2F2F;
