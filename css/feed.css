@@ -1,19 +1,16 @@
-@font-face {
-  font-family: 'GoetheFFClan-Bold';
-  src: url('fonts/GoetheFFClan-Bold.ttf') format('truetype');
-}
-
 html, body {
   background-color: #FADFD7;
   color: #2F2F2F;
+  font-family: 'Goethe FF Clan', sans-serif;
 }
 
-#feed {
-  position: absolute;
+#logo-onleihe {
+  margin-top: -8px;
+  width: 210px;
 }
 
 #feed h1 {
-  font-family: 'GoetheFFClan-Bold', sans-serif;
+  font-weight: bold;
   text-shadow: 0px 0px 1rem rgba(70,26,12,0.4); 
   color: #FFF;
 }
@@ -27,4 +24,3 @@ html, body {
 .top-3 { top: 3rem; }
 .left-4 { left: 4rem; }
 .right-4 { right: 4rem; }
-.w-200px { width: 200px; }
