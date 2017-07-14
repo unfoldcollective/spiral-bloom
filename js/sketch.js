@@ -1,6 +1,6 @@
 var useNoLoop = false;
 var useTiming = false;
-var useNoLoop = true;
+// var useNoLoop = true;
 // var useTiming = true;
 
 var timelinePath = "../scraping/data/timeline.json";
