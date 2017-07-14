@@ -48,13 +48,16 @@ function Feed(jsonInput, selector="#feed ul") {
         else if (input.type == "eVideo") {
             iconName = "icon-watch";
         }
-        let flowerColor = hslaToP5RGBA(flower_spiral[flowerIndex].petals.color1);
-        let bgColor = 'rgba('+flowerColor.levels[0]+','+flowerColor.levels[1]+','+flowerColor.levels[2]+',100)';
+        let flowerColor1 = hslaToP5RGBA(flower_spiral[flowerIndex].petals.color1);
+        let flowerColor2 = hslaToP5RGBA(flower_spiral[flowerIndex].petals.color2);
+        let bgColor1 = 'rgba('+flowerColor1.levels[0]+','+flowerColor1.levels[1]+','+flowerColor1.levels[2]+',100)';
+        let bgColor2 = 'rgba('+flowerColor2.levels[0]+','+flowerColor2.levels[1]+','+flowerColor2.levels[2]+',100)';
+        let bgImage = 'linear-gradient(135deg, '+bgColor1+' 30%, '+bgColor2+');';
 
         htmlString = '\
         <li class="animated fadeInUp dt bb b--black-05 pa2 mt2 br2 shadow-5" href="#0">\
             <div class="dtc">\
-              <div class="dtc v-mid w3 h3" style="background-color: '+bgColor+'">\
+              <div class="dtc v-mid w3 h3" style="background-image: '+bgImage+'">\
                 <img src="/img/'+iconName+'.png" class="db w2 h2 center">\
               </div>\
             </div>\
