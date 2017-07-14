@@ -5,6 +5,7 @@
 
 html, body {
   background-color: #FADFD7;
+  color: #2F2F2F;
 }
 
 #feed {
@@ -12,14 +13,11 @@ html, body {
 }
 
 #feed h1 {
-  background: #FFFAF8;
-  color: #2F2F2F;
   font-family: 'GoetheFFClan-Bold', sans-serif;
 }
 
 #feed li {
   background: #FFFAF8;
-  color: #2F2F2F;
 }
 
 // overriding / supplementing Tachyons
