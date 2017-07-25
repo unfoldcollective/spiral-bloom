@@ -3,7 +3,7 @@ var useTiming = false;
 // var useNoLoop = true;
 // var useTiming = true;
 
-var timelinePath = "../scraping/data/timeline.json";
+var timelinePath = "../samples/timeline.json";
 var a2 = 0.01;
 var b2 = 0.245;
 var minLoga = 4 * Math.PI * 2;
