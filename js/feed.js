@@ -16,13 +16,22 @@ function Feed(jsonInput, selector="#feed ul") {
         self.latest3 = _.slice(self.inputs,0,3);
         
         var intervalID1 = setTimeout(function(){
-            self.addInputToFeed(self.inputs[0], 0)
+            let input0 = self.inputs[0];
+            var d = new Date();
+            input0.time_stamp = d;
+            self.addInputToFeed(input0, 0)
         }, 1000);
         var intervalID2 = setTimeout(function(){
-            self.addInputToFeed(self.inputs[1], 1)
+            let input1 = self.inputs[1];
+            var d = new Date();
+            input1.time_stamp = d.setMinutes(d.getMinutes()-10);
+            self.addInputToFeed(input1, 1)
         }, 2000);
         var intervalID3 = setTimeout(function(){
-            self.addInputToFeed(self.inputs[2], 2)
+            let input2 = self.inputs[2];
+            var d = new Date();
+            input2.time_stamp = d.setHours(d.getHours()-1)
+            self.addInputToFeed(input2, 2)
         }, 3000);
 
         // _.forEach(self.latest3, function (input) {
