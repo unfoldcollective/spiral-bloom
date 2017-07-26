@@ -71,15 +71,15 @@ function Feed(jsonInput, selector="#feed ul") {
               </div>\
             </div>\
             <div class="dtc v-top pv1 ph3">\
-              <h3 class="f6 fw4 lh-title black-50">Vrátené</h1>\
+              <h3 class="f6 fw4 lh-title black-50">Returned</h1>\
               <h2 class="f5 fw4 lh-title mt1 black">'+time_ago+'</h2>\
             </div>\
             <div class="dtc v-top pv1 ph3">\
-              <h3 class="f6 fw4 lh-title black-50">Názov</h1>\
+              <h3 class="f6 fw4 lh-title black-50">Title</h1>\
               <h2 class="f5 fw4 lh-title mw6 mt1 black">'+title+'</h2>\
             </div>\
             <div class="dtc v-top pv1 ph3">\
-              <h3 class="f6 fw4 lh-title black-50">Autor</h1>\
+              <h3 class="f6 fw4 lh-title black-50">Author</h1>\
               <h2 class="f5 fw4 lh-title mt1 black">'+author+'</h2>\
             </div>\
         </li>\
