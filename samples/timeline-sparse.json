@@ -69,12 +69,12 @@
     "description_avg_word_length": 7.804347826086956,
     "publisher_n_words": 1,
     "title_link": "http://www2.onleihe.de/goethe-institut/frontend/mediaInfo,0-0-471100591-200-0-0-0-0-0-0-0.html",
-    "publisher_length": 11,
+    "publisher_length": 6,
     "title": "150 Aufsatzübungen, 2. bis 4. Klasse",
     "size": "66",
     "publisher": "Dudenverlag",
     "size_unit": "Seite",
-    "title_length": 36,
+    "title_length": 26,
     "author_avg_word_length": 7.0,
     "for_ereader": true,
     "description": "In mehr als 150 gezielten Übungen rund um das freie Schreiben können junge Textakrobaten sämtliche Aufsatzformen der Grundschule trainieren. Angefangen beim Beschreiben, Erzählen, Berichten über das kreative Schreiben von Texten bis hin zum Verfassen von Kurznachrichten und Briefen sind die Aufgaben sehr abwechslungsreich und nach Klassenstufen geordnet. Das Einleitungskapitel mit nützlichen Tipps, die übersichtlichen Infokästen zu den Aufsatzformen sowie zahlreiche Beispiele helfen den Kindern auf ihrem Weg zum Aufsatzprofi. Im Lösungsteil gibt es entsprechende Musteraufsätze zur Selbstkontrolle.&#13;\nDas Heft ist auf die aktuellen Bildungspläne für Grundschulen abgestimmt und für alle Bundesländer geeignet.",
@@ -84,7 +84,7 @@
     "years_ago": 1,
     "author": "Weber, Annette",
     "subtitle": "alle Aufsatzformen",
-    "publisher_avg_word_length": 11.0
+    "publisher_avg_word_length": 10.0
   },
   {
     "digital_size": "620",
@@ -169,7 +169,7 @@
     "author_link": "http://www2.onleihe.de/goethe-institut/frontend/simpleMediaList,0-0-441382176-103-0-0-0-0-0-42297315-0.html",
     "title_avg_word_length": 6.5,
     "subtitle_length": 8,
-    "years_ago": 1,
+    "years_ago": 0,
     "author": "Ditfurth, Christian;",
     "subtitle": "Thriller",
     "publisher_avg_word_length": 6.0
