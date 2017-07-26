@@ -12,6 +12,7 @@ var lastNdays = 3 * 1/24;
 var recency_threshold = 0.4;
 var everyNminutes = 15;
 var progress_delta = 0.01;
+var ROTATION_PERIOD_IN_MINUTES = 2;
 
 // gui params
 var opacity = 220;
@@ -278,7 +279,7 @@ function draw() {
     if (timelineConstructed) {
         push();
             translate(center.x, center.y);
-            rotate( millis() / (15 * 60 * 1000) * 2 * Math.PI );
+            rotate( millis() / (ROTATION_PERIOD_IN_MINUTES * 60 * 1000) * 2 * Math.PI );
             drawSpiral(spiral_logarithmic, spiral_hue, draw_ellipse, false);
             drawFlowers();
         pop();
