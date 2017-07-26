@@ -58,7 +58,7 @@ function Feed(jsonInput, selector="#feed ul") {
         <li class="animated fadeInUp dt bb b--black-05 pa2 mt2 br2 shadow-5" href="#0">\
             <div class="dtc">\
               <div class="dtc v-mid w3 h3" style="background-image: '+bgImage+'">\
-                <img src="/img/'+iconName+'.png" class="db w2 h2 center">\
+                <img src="./img/'+iconName+'.png" class="db w2 h2 center">\
               </div>\
             </div>\
             <div class="dtc v-top pv1 ph3">\
